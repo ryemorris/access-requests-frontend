@@ -94,11 +94,11 @@
     "webpack-cli": "4.3.1"
   },
   "insights": {
-    "appname": "access-requests"
+    "appname": "access_requests"
   },
   "routes": {
     "prefix": "internal",
-    "appname": "access-requests",
+    "appname": "access_requests",
     "samplePage": "/sample",
     "oops": "/oops",
     "noPermissions": "/no-permissions"
