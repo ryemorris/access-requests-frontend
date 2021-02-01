@@ -1,7 +1,7 @@
 {
-  "name": "frontend-starter-app",
+  "name": "access-requests",
   "version": "1.1.0",
-  "private": false,
+  "private": true,
   "scripts": {
     "build": "webpack --config config/prod.webpack.config.js",
     "build:prod": "NODE_ENV=production webpack --config config/prod.webpack.config.js",
@@ -94,11 +94,11 @@
     "webpack-cli": "4.3.1"
   },
   "insights": {
-    "appname": "starter"
+    "appname": "access-requests"
   },
   "routes": {
-    "prefix": "insights",
-    "appname": "starter",
+    "prefix": "internal",
+    "appname": "access-requests",
     "samplePage": "/sample",
     "oops": "/oops",
     "noPermissions": "/no-permissions"
