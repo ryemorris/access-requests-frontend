@@ -22,7 +22,7 @@ export const Routes = () => (
         <Spinner />
     </Bullseye>}>
         <Switch>
-            <Route path={paths.samplePage} component={SamplePage} />
+            <Route path={paths.samplePage} exact component={SamplePage} />
             <Route path={paths.oops} component={OopsPage} />
             <Route path={paths.noPermissions} component={NoPermissionsPage} />
             { /* Finally, catch all unmatched routes */}
