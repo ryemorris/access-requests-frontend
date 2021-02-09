@@ -70,6 +70,7 @@
     "babel-jest": "26.0.1",
     "babel-plugin-dual-import": "1.2.1",
     "babel-plugin-lodash": "3.3.4",
+    "copy-webpack-plugin": "^7.0.0",
     "cross-fetch": "^3.0.6",
     "css-loader": "3.5.3",
     "enzyme": "3.11.0",
@@ -94,12 +95,12 @@
     "webpack-cli": "4.3.1"
   },
   "insights": {
-    "appname": "access_requests"
+    "appname": "access-requests"
   },
   "routes": {
     "prefix": "internal",
-    "appname": "access_requests",
-    "samplePage": "/sample",
+    "appname": "access-requests",
+    "samplePage": "/",
     "oops": "/oops",
     "noPermissions": "/no-permissions"
   }
