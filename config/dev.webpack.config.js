@@ -6,15 +6,6 @@ const { config: webpackConfig, plugins } = config({
     https: true
 });
 
-plugins.push(
-    require('@redhat-cloud-services/frontend-components-config/federated-modules')(
-        {
-            root: resolve(__dirname, '../'),
-            moduleName: 'accessRequests'
-        }
-    )
-);
-
 module.exports = {
     ...webpackConfig,
     plugins
