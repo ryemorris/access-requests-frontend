@@ -2,7 +2,6 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 import React, { Suspense, lazy } from 'react';
-import { routes as paths } from '../package.json';
 import { Bullseye, Spinner } from '@patternfly/react-core';
 
 const SamplePage = lazy(() => import(/* webpackChunkName: "SamplePage" */ './Routes/SamplePage/SamplePage'));
@@ -22,12 +21,12 @@ export const Routes = () => (
         <Spinner />
     </Bullseye>}>
         <Switch>
-            <Route path={paths.samplePage} exact component={SamplePage} />
-            <Route path={paths.oops} component={OopsPage} />
-            <Route path={paths.noPermissions} component={NoPermissionsPage} />
+            <Route path="/" exact component={SamplePage} />
+            <Route path="/oops" component={OopsPage} />
+            <Route path="/no-permissions" component={NoPermissionsPage} />
             { /* Finally, catch all unmatched routes */}
             <Route>
-                <Redirect to={paths.samplePage} />
+                <Redirect to="/" />
             </Route>
         </Switch>
     </Suspense>
