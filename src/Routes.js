@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React, { Suspense, lazy } from 'react';
 import { Bullseye, Spinner } from '@patternfly/react-core';
 
-const SamplePage = lazy(() => import(/* webpackChunkName: "SamplePage" */ './Routes/SamplePage/SamplePage'));
+const AccessRequestsPage = lazy(() => import(/* webpackChunkName: "AccessRequestsPage" */ './Routes/AccessRequests/AccessRequestsPage'));
 const OopsPage = lazy(() => import(/* webpackChunkName: "OopsPage" */ './Routes/OopsPage/OopsPage'));
 const NoPermissionsPage = lazy(() => import(/* webpackChunkName: "NoPermissionsPage" */ './Routes/NoPermissionsPage/NoPermissionsPage'));
 
@@ -21,7 +21,7 @@ export const Routes = () => (
         <Spinner />
     </Bullseye>}>
         <Switch>
-            <Route path="/" exact component={SamplePage} />
+            <Route path="/" exact component={AccessRequestsPage} />
             <Route path="/oops" component={OopsPage} />
             <Route path="/no-permissions" component={NoPermissionsPage} />
             { /* Finally, catch all unmatched routes */}
