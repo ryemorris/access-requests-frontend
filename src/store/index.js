@@ -5,18 +5,18 @@ import { notificationsMiddleware } from '@redhat-cloud-services/frontend-compone
 let registry;
 
 export function init (...middleware) {
-    registry = getRegistry({}, [
-        promiseMiddleware,
-        notificationsMiddleware({ errorDescriptionKey: ['detail', 'stack'] }),
-        ...middleware
-    ]);
-    return registry;
+  registry = getRegistry({}, [
+    promiseMiddleware,
+    notificationsMiddleware({ errorDescriptionKey: ['detail', 'stack'] }),
+    ...middleware
+  ]);
+  return registry;
 }
 
 export function getStore () {
-    return registry.getStore();
+  return registry.getStore();
 }
 
 export function register (...args) {
-    return registry.register(...args);
+  return registry.register(...args);
 }

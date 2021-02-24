@@ -4,14 +4,14 @@ import { withRouter } from 'react-router-dom';
 import { Main, Unavailable } from '@redhat-cloud-services/frontend-components';
 
 const OopsPage = () => {
-    useEffect(() => {
+  useEffect(() => {
         insights?.chrome?.appAction?.('oops-page');
-    }, []);
-    return (
-        <Main>
-            <Unavailable/>
-        </Main>
-    );
+  }, []);
+  return (
+    <Main>
+      <Unavailable/>
+    </Main>
+  );
 };
 
 export default withRouter(OopsPage);

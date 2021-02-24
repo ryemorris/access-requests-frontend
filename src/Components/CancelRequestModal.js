@@ -9,7 +9,7 @@ const CancelRequestModal = ({ requestId, onClose }) => {
       onClose={onClose}
       actions={[
         <Button key="confirm" variant="danger" onClick={onClose}>Yes, cancel</Button>,
-        <Button key="cancel" variant="link" onClick={onClose}>No, keep</Button>,
+        <Button key="cancel" variant="link" onClick={onClose}>No, keep</Button>
       ]}
     >
       Request <b>{requestId}</b> will be withdrawn.

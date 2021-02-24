@@ -1,5 +1,21 @@
 import React from 'react';
-import { Label, Toolbar, ToolbarItem, ToolbarContent, Button, InputGroup, TextInput, Pagination, Dropdown, DropdownToggle, DropdownItem, Select, SelectOption, ChipGroup, Chip } from '@patternfly/react-core';
+import {
+  Label,
+  Toolbar,
+  ToolbarItem,
+  ToolbarContent,
+  Button,
+  InputGroup,
+  TextInput,
+  Pagination,
+  Dropdown,
+  DropdownToggle,
+  DropdownItem,
+  Select,
+  SelectOption,
+  ChipGroup,
+  Chip
+} from '@patternfly/react-core';
 import { TableComposable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import CancelRequestModal from '../CancelRequestModal';
 import EditRequestModal from '../EditRequestModal';
@@ -33,11 +49,11 @@ function getActions(row, setOpenModal) {
       onClick: () => setOpenModal({ type: 'cancel', row })
     });
   }
-  if (status === 'expired') {
+  else if (status === 'expired') {
     items.push({
       title: 'Renew',
       onClick: () => setOpenModal({ type: 'renew', row })
-    })
+    });
   }
 
   return { items, disable: items.length === 0 };
@@ -50,19 +66,19 @@ function getLabelProps(status) {
     color = 'blue';
     icon = <PendingIcon />;
   }
-  if (status === 'approved') {
+  else if (status === 'approved') {
     color = 'green';
     icon = <CheckCircleIcon />;
   }
-  if (status === 'denied') {
+  else if (status === 'denied') {
     color = 'red';
     icon = <ExclamationCircleIcon />;
   }
-  if (status === 'cancelled') {
+  else if (status === 'cancelled') {
     color = 'orange';
     icon = <ErrorCircleOIcon />;
   }
-  if (status === 'expired') {
+  else if (status === 'expired') {
     color = 'grey';
     icon = <ClockIcon />;
   }
@@ -76,12 +92,12 @@ const createdDateFormat = new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium'
 
 const AccessRequestsTable = () => {
   const columns = ['Request ID', 'Account ID', 'Start date', 'End date', 'Created', 'Status'];
-  const [rows, setRows] = React.useState([
+  const [rows] = React.useState([
     ['0004', '84282', '2020-04-24', '2021-04-24', '2029-02-13T11:24:03.591Z', 'pending'],
     ['0003', '87654', '2020-02-13', '2021-04-24', '2029-02-12T11:24:03.591Z', 'approved'],
     ['0002', '114470', '2019-04-24', '2020-04-24', '2020-02-13T11:24:03.591Z', 'denied'],
     ['0001', '169280', '2019-04-24', '2020-04-24', '2019-02-13T11:24:03.591Z', 'expired'],
-    ['0000', '169280', '2019-04-24', '2020-04-24', '2018-02-13T11:24:03.591Z', 'cancelled'],
+    ['0000', '169280', '2019-04-24', '2020-04-24', '2018-02-13T11:24:03.591Z', 'cancelled']
   ]);
   // Sorting
   const [activeSortIndex, setActiveSortIndex] = React.useState(4);
@@ -100,8 +116,8 @@ const AccessRequestsTable = () => {
       perPage={perPage}
       page={page}
       onSetPage={(_ev, pageNumber) => setPage(pageNumber)}
-      id={"access-requests-table-pagination-" + id}
-      variant={id} 
+      id={'access-requests-table-pagination-' + id}
+      variant={id}
       onPerPageSelect={(_ev, perPage) => setPerPage(perPage)}
     />
   );
@@ -111,8 +127,8 @@ const AccessRequestsTable = () => {
   const [filterColumn, setFilterColumn] = React.useState(columns[0]);
   const [isSelectOpen, setIsSelectOpen] = React.useState(false);
   const [statusSelections, setStatusSelections] = React.useState([]);
-  const selectLabelId = "filter-status";
-  const selectPlaceholder = "Filter by status";
+  const selectLabelId = 'filter-status';
+  const selectPlaceholder = 'Filter by status';
 
   // Modal actions
   const [openModal, setOpenModal] = React.useState({ type: null });
@@ -146,7 +162,7 @@ const AccessRequestsTable = () => {
                     variant="checkbox"
                     aria-label="Select statuses"
                     onToggle={isOpen => setIsSelectOpen(isOpen)}
-                    onSelect={(_ev, selection) => { 
+                    onSelect={(_ev, selection) => {
                       if (statusSelections.includes(selection)) {
                         setStatusSelections(statusSelections.filter(s => s !== selection));
                       }
@@ -159,7 +175,7 @@ const AccessRequestsTable = () => {
                     isCheckboxSelectionBadgeHidden
                     placeholderText={selectPlaceholder}
                   >
-                    {statuses.map(status => 
+                    {statuses.map(status =>
                       <SelectOption key={status} value={status}>{capitalize(status)}</SelectOption>
                     )}
                   </Select>
@@ -183,7 +199,7 @@ const AccessRequestsTable = () => {
         </ToolbarContent>
         <ToolbarContent>
           <ChipGroup categoryName="Status">
-            {statusSelections.map(status => 
+            {statusSelections.map(status =>
               <Chip key={status} onClick={() => setStatusSelections(statusSelections.filter(s => s !== status))}>
                 {status}
               </Chip>
@@ -206,37 +222,38 @@ const AccessRequestsTable = () => {
         </Thead>
         <Tbody>
           {rows
-            .filter(row => statusSelections.length > 0 ? statusSelections.includes(row[5]) : true)
-            .sort((a, b) => {
-              if (activeSortDirection === 'asc') {
-                return a[activeSortIndex].localeCompare(b[activeSortIndex]);
-              }
-              return b[activeSortIndex].localeCompare(a[activeSortIndex]);
-            })
-            .map((row, rowIndex) => (
-              <Tr key={rowIndex}>
-                <Td dataLabel={columns[0]}>
-                  <a href={`/settings/rbac/access-requests/${row[0]}`}>{row[0]}</a>
-                </Td>
-                <Td dataLabel={columns[1]}>
-                  {row[1]}
-                </Td>
-                <Td dataLabel={columns[2]}>
-                  {startEndDateFormat.format(new Date(row[2]))}
-                </Td>
-                <Td dataLabel={columns[3]}>
-                  {startEndDateFormat.format(new Date(row[3]))}
-                </Td>
-                <Td dataLabel={columns[4]}>
-                  {createdDateFormat.format(new Date(row[4]))} UTC
-                </Td>
-                <Td dataLabel={columns[5]}>
-                  <Label {...getLabelProps(row[5])}>{capitalize(row[5])}</Label>
-                </Td>
-                {/* Different actions based on status */}
-                <Td actions={getActions(row, setOpenModal)} />
-              </Tr>
-            ))}
+          .filter(row => statusSelections.length > 0 ? statusSelections.includes(row[5]) : true)
+          .sort((a, b) => {
+            if (activeSortDirection === 'asc') {
+              return a[activeSortIndex].localeCompare(b[activeSortIndex]);
+            }
+
+            return b[activeSortIndex].localeCompare(a[activeSortIndex]);
+          })
+          .map((row, rowIndex) => (
+            <Tr key={rowIndex}>
+              <Td dataLabel={columns[0]}>
+                <a href={`/settings/rbac/access-requests/${row[0]}`}>{row[0]}</a>
+              </Td>
+              <Td dataLabel={columns[1]}>
+                {row[1]}
+              </Td>
+              <Td dataLabel={columns[2]}>
+                {startEndDateFormat.format(new Date(row[2]))}
+              </Td>
+              <Td dataLabel={columns[3]}>
+                {startEndDateFormat.format(new Date(row[3]))}
+              </Td>
+              <Td dataLabel={columns[4]}>
+                {createdDateFormat.format(new Date(row[4]))} UTC
+              </Td>
+              <Td dataLabel={columns[5]}>
+                <Label {...getLabelProps(row[5])}>{capitalize(row[5])}</Label>
+              </Td>
+              {/* Different actions based on status */}
+              <Td actions={getActions(row, setOpenModal)} />
+            </Tr>
+          ))}
         </Tbody>
       </TableComposable>
       <AccessRequestsPagination id="bottom" />

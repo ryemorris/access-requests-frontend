@@ -9,29 +9,29 @@ import { getRegistry } from '@redhat-cloud-services/frontend-components-utilitie
 import { NotificationsPortal, notifications } from '@redhat-cloud-services/frontend-components-notifications/';
 
 const App = (props) => {
-    useEffect(() => {
-        const registry = getRegistry();
-        registry.register({ notifications });
-        insights.chrome.init();
+  useEffect(() => {
+    const registry = getRegistry();
+    registry.register({ notifications });
+    insights.chrome.init();
 
-        // TODO change this to your appname
-        insights.chrome.identifyApp('access-requests');
-        return insights.chrome.on(
-            'APP_NAVIGATION',
-            event => this.props.history.push(`/${event.navId}`)
-        );
-    }, []);
-
-    return (
-        <Fragment>
-            <NotificationsPortal />
-            <Routes childProps={ props } />
-        </Fragment>
+    // TODO change this to your appname
+    insights.chrome.identifyApp('access-requests');
+    return insights.chrome.on(
+      'APP_NAVIGATION',
+      event => this.props.history.push(`/${event.navId}`)
     );
+  }, []);
+
+  return (
+    <Fragment>
+      <NotificationsPortal />
+      <Routes childProps={ props } />
+    </Fragment>
+  );
 };
 
 App.propTypes = {
-    history: PropTypes.object
+  history: PropTypes.object
 };
 
 /**

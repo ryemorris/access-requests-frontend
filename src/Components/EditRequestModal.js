@@ -7,12 +7,12 @@ import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
 import { isValidDate } from '@patternfly/react-core/dist/esm/components/CalendarMonth';
 import { yyyyMMddFormat } from '@patternfly/react-core/dist/esm/components/DatePicker';
 
-const nameHelperText = "Customers will be able to see this information as part of your request";
+const nameHelperText = 'Customers will be able to see this information as part of your request';
 const helperTexts = {
   'first name': nameHelperText,
   'last name': nameHelperText,
-  'account id': "This is the account ID(s) that you would like to receive read access to",
-  'access duration': "This is the time frame you would like to be granted read access to accounts"
+  'account id': 'This is the account ID(s) that you would like to receive read access to',
+  'access duration': 'This is the time frame you would like to be granted read access to accounts'
 };
 const getLabelIcon = field => (
   <Popover bodyContent={<p>{helperTexts[field]}</p>}>
@@ -42,23 +42,28 @@ const RequestDetailsForm = ({ user = {}, accountId, setAccountId, from, setFrom,
         return 'From date must be today or later';
       }
     }
+
     return '';
   };
+
   const toValidator = date => {
     if (isValidDate(fromDate)) {
       if (fromDate > date) {
         setTo('');
         return 'To date must be after from date';
       }
+
       const maxToDate = new Date(fromDate);
       maxToDate.setFullYear(maxToDate.getFullYear() + 1);
       if (date > maxToDate) {
         setTo('');
-        return "Access duration cannot be longer than one year";
+        return 'Access duration cannot be longer than one year';
       }
     }
+
     return '';
   };
+
   const onFromChange = (str, date) => {
     setFromDate(new Date(date));
     setFrom(str);
@@ -68,22 +73,29 @@ const RequestDetailsForm = ({ user = {}, accountId, setAccountId, from, setFrom,
   return (
     <Form>
       <Title headingLevel="h2">Request details</Title>
-        <Split hasGutter>
-          <SplitItem isFilled>
-            <FormGroup label="First name" labelIcon={getLabelIcon('first name')}>
-              <TextInput id="first-name" value={user.first_name} isDisabled />
-            </FormGroup>
-          </SplitItem>
-          <SplitItem isFilled>
-            <FormGroup label="Last name" labelIcon={getLabelIcon('last name')}>
-              <TextInput id="last-name" value={user.last_name} isDisabled />
-            </FormGroup>
-          </SplitItem>
-        </Split>
-        <FormGroup label="Account ID" isRequired labelIcon={getLabelIcon('account id')} helperText="Enter the account ID you would like access to">
-          <TextInput id="account-id" value={accountId} onChange={val => setAccountId(val)} isRequired placeholder="Example, 865392" isDisabled={disableAccount} />
-        </FormGroup>
-        <FormGroup label="Access duration" isRequired labelIcon={getLabelIcon('access duration')}>
+      <Split hasGutter>
+        <SplitItem isFilled>
+          <FormGroup label="First name" labelIcon={getLabelIcon('first name')}>
+            <TextInput id="first-name" value={user.first_name} isDisabled />
+          </FormGroup>
+        </SplitItem>
+        <SplitItem isFilled>
+          <FormGroup label="Last name" labelIcon={getLabelIcon('last name')}>
+            <TextInput id="last-name" value={user.last_name} isDisabled />
+          </FormGroup>
+        </SplitItem>
+      </Split>
+      <FormGroup label="Account ID" isRequired labelIcon={getLabelIcon('account id')} helperText="Enter the account ID you would like access to">
+        <TextInput
+          id="account-id"
+          value={accountId}
+          onChange={val => setAccountId(val)}
+          isRequired
+          placeholder="Example, 865392"
+          isDisabled={disableAccount}
+        />
+      </FormGroup>
+      <FormGroup label="Access duration" isRequired labelIcon={getLabelIcon('access duration')}>
         <FormGroup label="From" isRequired>
           <DatePicker
             aria-label="Start date"
@@ -104,7 +116,7 @@ const RequestDetailsForm = ({ user = {}, accountId, setAccountId, from, setFrom,
       </FormGroup>
     </Form>
   );
-}
+};
 
 // Can't use CSS with @redhat-cloud-services/frontend-components-config because it's scoped to <main> content
 // rather than Modal content...
@@ -134,7 +146,7 @@ const ReviewStep = ({ accountId, from, to, roles }) => (
         <td><b>Roles</b></td>
         <td>{roles[0].name}</td>
       </tr>
-      {roles.splice(1).map(role => 
+      {roles.splice(1).map(role =>
         <tr key={role.uuid}>
           <td></td>
           <td>{role.name}</td>
@@ -157,9 +169,9 @@ const EditRequestModal = ({ row = [], variant, onClose }) => {
         setUser(user.identity.user);
       }
       else {
-        console.log("couldnt fetch user?", user);
+        console.log('couldnt fetch user?', user);
       }
-    }, err => console.error("couldnt fetch user", err))
+    }, err => console.error('couldnt fetch user', err));
   }, []);
 
   const step1Complete = true || [accountId, from, to].every(Boolean);

@@ -11,7 +11,7 @@ const AccessRequestsPage = () => {
         <Title headingLevel="h1">Access Requests</Title>
         <p>Below is a list of all submitted requests for read only account access.</p>
       </PageSection>
-      <PageSection variant="light" padding={{ default: "noPadding" }}>
+      <PageSection variant="light" padding={{ default: 'noPadding' }}>
         <AccessRequestsTable />
       </PageSection>
     </React.Fragment>

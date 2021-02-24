@@ -17,25 +17,25 @@ const NoPermissionsPage = lazy(() => import(/* webpackChunkName: "NoPermissionsP
  *      component - component to be rendered when a route has been chosen.
  */
 export const Routes = () => (
-    <Suspense fallback={<Bullseye>
-        <Spinner />
-    </Bullseye>}>
-        <Switch>
-            <Route path="/" exact component={AccessRequestsPage} />
-            <Route path="/oops" component={OopsPage} />
-            <Route path="/no-permissions" component={NoPermissionsPage} />
-            { /* Finally, catch all unmatched routes */}
-            <Route>
-                <Redirect to="/" />
-            </Route>
-        </Switch>
-    </Suspense>
+  <Suspense fallback={<Bullseye>
+    <Spinner />
+  </Bullseye>}>
+    <Switch>
+      <Route path="/" exact component={AccessRequestsPage} />
+      <Route path="/oops" component={OopsPage} />
+      <Route path="/no-permissions" component={NoPermissionsPage} />
+      { /* Finally, catch all unmatched routes */}
+      <Route>
+        <Redirect to="/" />
+      </Route>
+    </Switch>
+  </Suspense>
 );
 
 Routes.propTypes = {
-    childProps: PropTypes.shape({
-        history: PropTypes.shape({
-            push: PropTypes.func
-        })
+  childProps: PropTypes.shape({
+    history: PropTypes.shape({
+      push: PropTypes.func
     })
+  })
 };
