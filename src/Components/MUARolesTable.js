@@ -14,11 +14,13 @@ import {
   Button,
   Pagination,
   ChipGroup,
-  Chip
+  Chip,
+  DropdownToggleCheckbox
 } from '@patternfly/react-core';
 import { TableComposable, Thead, Tbody, Tr, Th, Td, TableText } from '@patternfly/react-table';
 import roleList from './roles.js';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
+import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
 
 roleList.forEach(role => role.permissions = role.applications.length);
@@ -36,25 +38,6 @@ const MUARolesTable = ({ roles, setRoles }) => {
   const columns = ['Role name', 'Role description', 'Permissions'];
   const [rows, setRows] = React.useState(roleList);
   // TODO: fetch('/api/rbac/v1/roles/?limit=1000&order_by=display_name').then(res => res.json()).then(j => console.log(j))
-  // Selecting
-  const onSelect = (_ev, isSelected, rowId) => {
-    if (isSelected) {
-      setRoles(roles.concat(roleList[rowId]));
-    }
-    else {
-      const unselectedUUID = roleList[rowId].uuid;
-      setRoles(roles.filter(role => role.uuid !== unselectedUUID));
-    }
-  };
-
-  const onSelectAll = (_ev, isSelected) => {
-    if (isSelected) {
-      setRoles([...roleList]);
-    }
-    else {
-      setRoles([]);
-    }
-  };
 
   // Filtering
   const [activeSortIndex, setActiveSortIndex] = React.useState('name');
@@ -71,13 +54,14 @@ const MUARolesTable = ({ roles, setRoles }) => {
   const [filterColumn, setFilterColumn] = React.useState(columns[0]);
   const [isSelectOpen, setIsSelectOpen] = React.useState(false);
   const [appSelections, setAppSelections] = React.useState([]);
-  const [filter, setFilter] = React.useState('');
+  const [nameFilter, setNameFilter] = React.useState('');
+  const [nameFilters, setNameFilters] = React.useState([]);
   const selectLabelId = 'filter-application';
   const selectPlaceholder = 'Filter by application';
 
   const filteredRows = rows
   .filter(row => appSelections.length > 0 ? row.applications.find(app => appSelections.includes(app)) : true)
-  .filter(row => row.name.toLowerCase().includes(filter.toLowerCase()));
+  .filter(row => nameFilters.length > 0 ? nameFilters.some(name => row.name.toLowerCase().includes(name)) : true);
 
   // Pagination
   const [page, setPage] = React.useState(1);
@@ -94,12 +78,89 @@ const MUARolesTable = ({ roles, setRoles }) => {
       isCompact={id === 'top'}
     />
   );
+  const pagedRows = filteredRows
+  .sort((a, b) => {
+    if (typeof a[activeSortIndex] === 'number') {
+      // numeric sort
+      if (activeSortDirection === 'asc') {
+        return a[activeSortIndex] - b[activeSortIndex];
+      }
+
+      return b[activeSortIndex] - a[activeSortIndex];
+    } else {
+      // string sort
+      if (activeSortDirection === 'asc') {
+        return a[activeSortIndex].localeCompare(b[activeSortIndex]);
+      }
+
+      return b[activeSortIndex].localeCompare(a[activeSortIndex]);
+    }
+  })
+  .slice((page - 1) * perPage, page * perPage);
+
+  // Selecting
+  const [isBulkSelectOpen, setIsBulkSelectOpen] = React.useState(false);
+  const anySelected = roles.length > 0;
+  const someChecked = anySelected ? null : false;
+  const isChecked = roles.length === filteredRows.length ? true : someChecked;
+  const onSelect = (_ev, isSelected, rowId) => {
+    if (isSelected) {
+      setRoles(roles.concat(filteredRows[rowId]));
+    }
+    else {
+      const unselectedUUID = filteredRows[rowId].uuid;
+      setRoles(roles.filter(role => role.uuid !== unselectedUUID));
+    }
+  };
+
+  const onSelectAll = (_ev, isSelected) => {
+    if (isSelected) {
+      setRoles([...filteredRows]);
+    }
+    else {
+      setRoles([]);
+    }
+  };
+
   return (
     <React.Fragment>
       <Title headingLevel="h2">Select roles</Title>
-      <p>Select the roles you would like access to.</p>
       <Toolbar id="access-requests-roles-table-toolbar">
         <ToolbarContent>
+          <ToolbarItem>
+            <Dropdown
+              onSelect={() => setIsBulkSelectOpen(!isBulkSelectOpen)}
+              position="left"
+              toggle={
+                <DropdownToggle
+                  splitButtonItems={[
+                    <DropdownToggleCheckbox
+                      key="a"
+                      id="example-checkbox-2"
+                      aria-label={anySelected ? 'Deselect all' : 'Select all'}
+                      isChecked={isChecked}
+                      onClick={() => onSelectAll(null, !anySelected)}
+                    />
+                  ]}
+                  onToggle={isOpen => setIsBulkSelectOpen(isOpen)}
+                >
+                  {roles.length !== 0 && <React.Fragment>{roles.length} selected</React.Fragment>}
+                </DropdownToggle>
+              }
+              isOpen={isBulkSelectOpen}
+              dropdownItems={[
+                <DropdownItem key="0" onClick={() => onSelectAll(null, false)}>
+                  Select none (0 items)
+                </DropdownItem>,
+                <DropdownItem key="1" onClick={() => setRoles(roles.concat(pagedRows))}>
+                  Select page ({Math.min(pagedRows.length, perPage)} items)
+                </DropdownItem>,
+                <DropdownItem key="2" onClick={() => onSelectAll(null, true)}>
+                  Select all ({filteredRows.length} items)
+                </DropdownItem>
+              ]}
+            />
+          </ToolbarItem>
           <ToolbarItem>
             <InputGroup>
               <Dropdown
@@ -137,20 +198,33 @@ const MUARolesTable = ({ roles, setRoles }) => {
                     selections={Array.from(appSelections)}
                     isCheckboxSelectionBadgeHidden
                     placeholderText={selectPlaceholder}
+                    style={{ maxHeight: '400px', overflowY: 'auto' }}
                   >
                     {applications.map(app =>
                       <SelectOption key={app} value={app}>{capitalize(app)}</SelectOption>
                     )}
                   </Select>
                 </React.Fragment>
-                : <TextInput
-                  name="rolesSearch"
-                  id="rolesSearch"
-                  type="search"
-                  aria-label="Search input"
-                  value={filter}
-                  onChange={val => setFilter(val)}
-                />
+                : <form
+                  style={{ display: 'flex' }}
+                  onSubmit={ev => {
+                    ev.preventDefault();
+                    setNameFilters(nameFilters.concat(nameFilter));
+                    setNameFilter('');
+                  }}
+                >
+                  <TextInput
+                    name="rolesSearch"
+                    id="rolesSearch"
+                    type="search"
+                    aria-label="Search input"
+                    value={nameFilter}
+                    onChange={val => setNameFilter(val)}
+                  />
+                  <Button variant="control" type="submit" aria-label="Search button for search input">
+                    <SearchIcon />
+                  </Button>
+                </form>
               }
             </InputGroup>
           </ToolbarItem>
@@ -158,27 +232,41 @@ const MUARolesTable = ({ roles, setRoles }) => {
             <AccessRequestsPagination id="top" />
           </ToolbarItem>
         </ToolbarContent>
-        <ToolbarContent>
-          <ChipGroup categoryName="Status">
-            {appSelections.map(status =>
-              <Chip key={status} onClick={() => setAppSelections(appSelections.filter(s => s !== status))}>
-                {status}
-              </Chip>
-            )}
-          </ChipGroup>
-          {appSelections.length > 0 && <Button variant="link" onClick={() => setAppSelections([])}>Clear filters</Button>}
-        </ToolbarContent>
+        {(appSelections.length > 0 || nameFilters.length > 0) &&
+          <ToolbarContent>
+            {nameFilters.length > 0 &&
+              <ChipGroup categoryName="Role name">
+                {nameFilters.map(name =>
+                  <Chip key={name} onClick={() => setNameFilters(nameFilters.filter(s => s !== name))}>
+                    {name}
+                  </Chip>
+                )}
+              </ChipGroup>
+            }
+            {appSelections.length > 0 &&
+              <ChipGroup categoryName="Status">
+                {appSelections.map(status =>
+                  <Chip key={status} onClick={() => setAppSelections(appSelections.filter(s => s !== status))}>
+                    {status}
+                  </Chip>
+                )}
+              </ChipGroup>
+            }
+            {(appSelections.length > 0 || nameFilters.length > 0) &&
+              <Button
+                variant="link"
+                onClick={() => { setAppSelections([]); setNameFilters([]); }}
+              >
+                Clear filters
+              </Button>
+            }
+          </ToolbarContent>
+        }
       </Toolbar>
       <TableComposable aria-label="My user access roles" variant="compact">
         <Thead>
           <Tr>
-            <Th
-              select={{
-                onSelect: onSelectAll,
-                isSelected: roles.length === rows.length
-              }}
-              modifier="nowrap"
-            />
+            <Th />
             <Th
               width={30}
               sort={{ sortBy: { index: activeSortIndex, direction: activeSortDirection }, onSort, columnIndex: 'name' }}
@@ -201,26 +289,7 @@ const MUARolesTable = ({ roles, setRoles }) => {
           </Tr>
         </Thead>
         <Tbody>
-          {filteredRows
-          .sort((a, b) => {
-            if (typeof a[activeSortIndex] === 'number') {
-              // numeric sort
-              if (activeSortDirection === 'asc') {
-                return a[activeSortIndex] - b[activeSortIndex];
-              }
-
-              return b[activeSortIndex] - a[activeSortIndex];
-            } else {
-              // string sort
-              if (activeSortDirection === 'asc') {
-                return a[activeSortIndex].localeCompare(b[activeSortIndex]);
-              }
-
-              return b[activeSortIndex].localeCompare(a[activeSortIndex]);
-            }
-          })
-          .slice((page - 1) * perPage, page * perPage)
-          .map((row, rowIndex) => (
+          {pagedRows.map((row, rowIndex) => (
             <Tr key={rowIndex}>
               <Td
                 select={{

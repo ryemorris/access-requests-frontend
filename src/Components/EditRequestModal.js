@@ -1,6 +1,15 @@
 import React from 'react';
 import { Modal, Wizard } from '@patternfly/react-core';
-import { Form, FormGroup, TextInput, Split, SplitItem, Popover, DatePicker, Title } from '@patternfly/react-core';
+import {
+  Form,
+  FormGroup,
+  TextInput,
+  Split,
+  SplitItem,
+  Popover,
+  DatePicker,
+  Title
+} from '@patternfly/react-core';
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
 import MUARolesTable from './MUARolesTable';
 import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
@@ -29,11 +38,18 @@ const getLabelIcon = field => (
 );
 
 const today = new Date();
-today.setHours(0);
-today.setMinutes(0);
-today.setSeconds(0);
+today.setDate(today.getDate() - 1);
 
-const RequestDetailsForm = ({ user = {}, accountId, setAccountId, from, setFrom, to, setTo, disableAccount }) => {
+const RequestDetailsForm = ({
+  user = {},
+  accountId,
+  setAccountId,
+  from,
+  setFrom,
+  to,
+  setTo,
+  disableAccount
+}) => {
   let [fromDate, setFromDate] = React.useState();
 
   const fromValidator = date => {
@@ -96,23 +112,30 @@ const RequestDetailsForm = ({ user = {}, accountId, setAccountId, from, setFrom,
         />
       </FormGroup>
       <FormGroup label="Access duration" isRequired labelIcon={getLabelIcon('access duration')}>
-        <FormGroup label="From" isRequired>
-          <DatePicker
-            aria-label="Start date"
-            value={from}
-            onChange={onFromChange}
-            validators={[fromValidator]}
-          />
-        </FormGroup>
-        <FormGroup label="To" isRequired>
-          <DatePicker
-            aria-label="End date"
-            value={to}
-            onChange={date => setTo(date)}
-            validators={[toValidator]}
-            rangeStart={from}
-          />
-        </FormGroup>
+        <Split>
+          <SplitItem>
+            <DatePicker
+              width="300px"
+              aria-label="Start date"
+              value={from}
+              onChange={onFromChange}
+              validators={[fromValidator]}
+            />
+          </SplitItem>
+          <SplitItem style={{ padding: '6px 12px 0 12px' }}>
+            to
+          </SplitItem>
+          <SplitItem>
+            <DatePicker
+              width="300px"
+              aria-label="End date"
+              value={to}
+              onChange={date => setTo(date)}
+              validators={[toValidator]}
+              rangeStart={from}
+            />
+          </SplitItem>
+        </Split>
       </FormGroup>
     </Form>
   );
@@ -174,7 +197,7 @@ const EditRequestModal = ({ row = [], variant, onClose }) => {
     }, err => console.error('couldnt fetch user', err));
   }, []);
 
-  const step1Complete = true || [accountId, from, to].every(Boolean);
+  const step1Complete = [accountId, from, to].every(Boolean);
   const step2Complete = roles.length > 0;
 
   const steps = [
@@ -211,7 +234,6 @@ const EditRequestModal = ({ row = [], variant, onClose }) => {
     }
   ];
 
-  console.log('roles', roles);
   const titleId = `${variant}-request`;
   const descriptionId = `${variant} request`;
   return (
@@ -230,7 +252,6 @@ const EditRequestModal = ({ row = [], variant, onClose }) => {
         title={capitalize(variant) + ' request'}
         steps={steps}
         onClose={onClose}
-        height={400}
       />
     </Modal>
   );

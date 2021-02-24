@@ -23,11 +23,11 @@ import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 import CheckCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
-import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
-import ErrorCircleOIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
+import ErrorCircleOIcon from '@patternfly/react-icons/dist/js/icons/error-circle-o-icon';
 // TODO: where are these designer icons?
-import PendingIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
-import ClockIcon from '@patternfly/react-icons/dist/js/icons/check-circle-icon';
+import PendingIcon from '@patternfly/react-icons/dist/js/icons/in-progress-icon';
+import ClockIcon from '@patternfly/react-icons/dist/js/icons/history-icon';
 
 const statuses = [
   'pending',
