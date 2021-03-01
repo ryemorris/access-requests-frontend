@@ -6,6 +6,7 @@ const CancelRequestModal = ({ requestId, onClose }) => {
     <Modal
       title="Cancel request?"
       isOpen
+      variant="small"
       onClose={onClose}
       actions={[
         <Button key="confirm" variant="danger" onClick={onClose}>Yes, cancel</Button>,

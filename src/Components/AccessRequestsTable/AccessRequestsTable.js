@@ -248,7 +248,13 @@ const AccessRequestsTable = () => {
                 {createdDateFormat.format(new Date(row[4]))} UTC
               </Td>
               <Td dataLabel={columns[5]}>
-                <Label {...getLabelProps(row[5])}>{capitalize(row[5])}</Label>
+                <Label {...getLabelProps(row[5])} render={({ content, className }) =>
+                  <button className={className} onClick={() => setStatusSelections([...statusSelections, row[5]])}>
+                    {content}
+                  </button>
+                }>
+                  {capitalize(row[5])}
+                </Label>
               </Td>
               {/* Different actions based on status */}
               <Td actions={getActions(row, setOpenModal)} />

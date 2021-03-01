@@ -20,7 +20,7 @@ const nameHelperText = 'Customers will be able to see this information as part o
 const helperTexts = {
   'first name': nameHelperText,
   'last name': nameHelperText,
-  'account id': 'This is the account ID(s) that you would like to receive read access to',
+  'account id': 'This is the account ID that you would like to receive read access to',
   'access duration': 'This is the time frame you would like to be granted read access to accounts'
 };
 const getLabelIcon = field => (
@@ -107,7 +107,7 @@ const RequestDetailsForm = ({
           value={accountId}
           onChange={val => setAccountId(val)}
           isRequired
-          placeholder="Example, 865392"
+          placeholder="865392"
           isDisabled={disableAccount}
         />
       </FormGroup>
