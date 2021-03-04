@@ -83,7 +83,13 @@ const RequestDetailsForm = ({
   const onFromChange = (str, date) => {
     setFromDate(new Date(date));
     setFrom(str);
-    setTo('');
+    if (isValidDate(date)) {
+      date.setDate(date.getDate() + 7);
+      setTo(yyyyMMddFormat(date));
+    }
+    else {
+      setTo('');
+    }
   };
 
   return (
@@ -239,6 +245,7 @@ const EditRequestModal = ({ row = [], variant, onClose }) => {
   return (
     <Modal
       variant="large"
+      style={{ height: '900px' }}
       showClose={false}
       hasNoBodyWrapper
       isOpen

@@ -125,6 +125,7 @@ const MUARolesTable = ({ roles, setRoles }) => {
   return (
     <React.Fragment>
       <Title headingLevel="h2">Select roles</Title>
+      <p>Select the roles you would like access to.</p>
       <Toolbar id="access-requests-roles-table-toolbar">
         <ToolbarContent>
           <ToolbarItem>

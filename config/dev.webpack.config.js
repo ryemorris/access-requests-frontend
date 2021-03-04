@@ -20,15 +20,7 @@ plugins.push(
 //console.log('plugins', plugins);
 plugins.splice(6, 1); // Eslint
 
-webpackConfig.devServer.proxy = getProxyPaths(3101, webpackConfig.output.publicPath, 8002);
-webpackConfig.devServer.proxy.unshift({
-  context: [
-    '/api/rbac'
-  ],
-  target: 'https://cloud.redhat.com',
-  secure: false,
-  changeOrigin: true
-});
+webpackConfig.devServer.proxy = getProxyPaths(3101, webpackConfig.output.publicPath, webpackConfig.devServer.port);
 webpackConfig.devServer.hot = false;
 
 module.exports = {
