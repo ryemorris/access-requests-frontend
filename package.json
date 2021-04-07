@@ -1,5 +1,8 @@
 {
-  "name": "access-requests",
+  "name": "@redhat-cloud-services/access-requests-frontend",
+  "insights": {
+    "appname": "access-requests"
+  },
   "version": "1.1.0",
   "private": true,
   "scripts": {

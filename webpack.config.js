@@ -8,7 +8,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const { getProxyPaths, getHtmlReplacements } = require('@redhat-cloud-services/insights-standalone');
 const ChunkMapperPlugin = require('./config/chunk-mapper');
-const { name, dependencies } = require('./package.json');
+const { insights, dependencies } = require('./package.json');
 
 const fileRegEx = /\.(png|woff|woff2|eot|ttf|svg|gif|jpe?g|png)(\?[a-z0-9=.]+)?$/;
 const srcDir = path.resolve(__dirname, './src');
@@ -31,6 +31,7 @@ const singletonDeps = [
   '@redhat-cloud-services/frontend-components-utilities',
   '@redhat-cloud-services/frontend-components-notifications',
 ];
+const name = insights.appname;
 const moduleName = name.replace(/-(\w)/g, (_, match) => match.toUpperCase());
 
 module.exports = (_env, argv) => {
