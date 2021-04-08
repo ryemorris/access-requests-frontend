@@ -37,8 +37,8 @@ const moduleName = name.replace(/-(\w)/g, (_, match) => match.toUpperCase());
 module.exports = (_env, argv) => {
   const gitBranch = process.env.TRAVIS_BRANCH || process.env.BRANCH || gitRevisionPlugin.branch();
   const isProduction = argv.mode === 'production';
-  const appDeployment = (isProduction && betaBranches.includes(gitBranch)) ? '/beta' : '';
-  const publicPath = `${appDeployment}/apps/${name}/`;
+  const appDeployment = (isProduction && betaBranches.includes(gitBranch)) ? '/beta/apps' : '/apps';
+  const publicPath = `${appDeployment}/${name}/`;
   const entry = path.join(srcDir, 'entry.js');
   const port = 8002;
 
