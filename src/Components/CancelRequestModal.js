@@ -9,7 +9,7 @@ const CancelRequestModal = ({ requestId, onClose }) => {
   const onCancel = () => {
     setIsLoading(true);
     // https://ci.cloud.redhat.com/docs/api-docs/rbac#operations-CrossAccountRequest-patchCrossAccountRequest
-    fetch(`${API_BASE}/cross-account-requests/?uuid=${requestId}`, {
+    fetch(`${API_BASE}/cross-account-requests/${requestId}/`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'

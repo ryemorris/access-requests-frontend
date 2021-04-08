@@ -109,7 +109,7 @@ module.exports = (_env, argv) => {
           pattern: '@@env',
           replacement: appDeployment,
         },
-        ...(!isProduction ? getHtmlReplacements() : [])
+        ...(isProduction ? [] : getHtmlReplacements())
       ]),
       new webpack.container.ModuleFederationPlugin({
         name: moduleName,
@@ -143,7 +143,6 @@ module.exports = (_env, argv) => {
       port,
       host: 'localhost',
       hot: false,
-      injectHot: false,
       historyApiFallback: {
         index: `${publicPath}index.html`
       },

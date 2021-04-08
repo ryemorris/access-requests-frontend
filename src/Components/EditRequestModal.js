@@ -270,7 +270,7 @@ const EditRequestModal = ({ row = [], variant, onClose }) => {
       end_date: end,
       roles
     };
-    fetch(`${API_BASE}/cross-account-requests/${isEdit ? `?uuid=${row[0]}` : ''}`, {
+    fetch(`${API_BASE}/cross-account-requests/${isEdit ? `/${row[0]}/` : ''}`, {
       method: isEdit ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -284,7 +284,7 @@ const EditRequestModal = ({ row = [], variant, onClose }) => {
         }
         dispatch(addNotification({
           variant: 'success',
-          title: `${capitalize(variant)}d access request`,
+          title: `${variant === 'edit' ? 'Edited' : 'Created'} access request`,
           description: res.request_id,
           dismissable: true
         }));

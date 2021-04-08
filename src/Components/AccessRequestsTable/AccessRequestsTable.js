@@ -28,7 +28,7 @@ import EditRequestModal from '../EditRequestModal';
 import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import CubesIcon from '@patternfly/react-icons/dist/js/icons/cubes-icon';
+import PlusCircleIcon from '@patternfly/react-icons/dist/js/icons/plus-circle-icon';
 import { useDispatch } from 'react-redux'
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { Link } from 'react-router-dom';
@@ -66,7 +66,7 @@ function getActions(row, setOpenModal) {
 
 
 
-const AccessRequestsTable = () => {
+const AccessRequestsTable = ({ isApprover }) => {
   const columns = ['Request ID', 'Account number', 'Start date', 'End date', 'Created', 'Status'];
 
   // Sorting
@@ -180,7 +180,7 @@ const AccessRequestsTable = () => {
   );
 
   // Rendering
-  const createButton = (
+  const createButton = !isApprover && (
     <Button variant="primary" onClick={() => setOpenModal({ type: 'create' })}>
       Create request
     </Button>
@@ -190,13 +190,17 @@ const AccessRequestsTable = () => {
       <Bullseye>
         {isLoading
           ? <Spinner size="xl" />
-          : <EmptyState>
-              <EmptyStateIcon icon={CubesIcon} />
+          : <EmptyState variant="large">
+              <EmptyStateIcon icon={PlusCircleIcon} />
               <Title headingLevel="h3" size="lg">
-                Empty state
+                {isApprover
+                  ? 'You have no access requests'
+                  : 'No access requests'}
               </Title>
               <EmptyStateBody>
-                I'm empty
+                {isApprover
+                  ? 'You have no pending Red Hat access requests.'
+                  : 'Click the button below to create an access request.'}
               </EmptyStateBody>
               {createButton}
             </EmptyState>
