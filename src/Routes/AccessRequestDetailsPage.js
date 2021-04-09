@@ -70,7 +70,7 @@ const AccessRequestDetailsPage = ({ requestId, canApprove }) => {
       <PageSection>
         <Flex spaceItems={{ xl: 'spaceItemsLg' }} direction={{ default: 'column', lg: 'row' }}>
           <FlexItem flex={{ default: 'flex_1' }} alignSelf={{ default: 'alignSelfStretch' }}>
-            <Card style={{ height: '100%' }}>
+            <Card ouiaId="request-details" style={{ height: '100%' }}>
               <CardTitle>
                 <Title headingLevel="h2" size="xl">
                   Request details
@@ -111,7 +111,7 @@ const AccessRequestDetailsPage = ({ requestId, canApprove }) => {
             </Card>
           </FlexItem>
           <FlexItem flex={{ default: 'flex_3' }} grow={{ default: 'grow' }} alignSelf={{ default: 'alignSelfStretch' }}>
-            <Card style={{ height: '100%' }}>
+            <Card ouiaId="request-roles" style={{ height: '100%' }}>
               <CardTitle>
                 <Title headingLevel="h2" size="xl">
                   Roles requested
