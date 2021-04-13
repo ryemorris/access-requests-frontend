@@ -1,5 +1,4 @@
 import React from 'react';
-import { Modal, Wizard } from '@patternfly/react-core';
 import {
   Form,
   FormGroup,
@@ -13,7 +12,10 @@ import {
   EmptyState,
   EmptyStateIcon,
   EmptyStateBody,
-  Button
+  Button,
+  Modal,
+  Wizard,
+  WizardContextConsumer
 } from '@patternfly/react-core';
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
@@ -30,6 +32,7 @@ const helperTexts = {
   'account number': 'This is the account number that you would like to receive read access to',
   'access duration': 'This is the time frame you would like to be granted read access to accounts'
 };
+const invalidAccountTitle = 'Invalid Account number';
 const getLabelIcon = field => (
   <Popover bodyContent={<p>{helperTexts[field]}</p>}>
     <button
@@ -198,6 +201,7 @@ const ReviewStep = ({ targetAccount, start, end, roles, isLoading, error, onClos
     );
   }
   else if (error) {
+    const context = React.useContext(WizardContextConsumer);
     content = (
       <EmptyState>
         <EmptyStateIcon icon={ExclamationCircleIcon} />
@@ -207,6 +211,11 @@ const ReviewStep = ({ targetAccount, start, end, roles, isLoading, error, onClos
         <EmptyStateBody>
           {error.description}
         </EmptyStateBody>
+        {error.title === invalidAccountTitle &&
+          <Button variant="primary" onClick={() => context.goToStepById(1)}>
+            Return to Step 1
+          </Button>
+        }
       </EmptyState>
     );
   }
@@ -341,7 +350,7 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
       .catch(err => {
         const isInvalidAccount = /Account .* does not exist/.test(err.message);
         setError({
-          title: isInvalidAccount ? 'Invalid Account Number' : `Could not ${variant} access request`,
+          title: isInvalidAccount ? invalidAccountTitle : `Could not ${variant} access request`,
           description: isInvalidAccount
            ? 'Please return to Step 1: Request details and input a new account number for your request.'
            : err.message
