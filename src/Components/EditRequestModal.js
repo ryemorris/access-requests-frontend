@@ -9,9 +9,14 @@ import {
   Popover,
   DatePicker,
   Title,
-  Spinner
+  Spinner,
+  EmptyState,
+  EmptyStateIcon,
+  EmptyStateBody,
+  Button
 } from '@patternfly/react-core';
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
 import { isValidDate } from '@patternfly/react-core/dist/esm/components/CalendarMonth';
 import { useDispatch } from 'react-redux'
@@ -177,45 +182,80 @@ const RequestDetailsForm = ({
 // Can't use CSS with @redhat-cloud-services/frontend-components-config because it's scoped to <main> content
 // rather than Modal content...
 const spaceUnderStyle = { paddingBottom: '16px' };
-const ReviewStep = ({ targetAccount, start, end, roles, isLoading }) => (
-  <React.Fragment>
-    <Title headingLevel="h2" style={spaceUnderStyle}>Review details</Title>
-    <table>
-      <tr>
-        <td style={spaceUnderStyle}><b>Account number</b></td>
-        <td style={spaceUnderStyle}>{targetAccount}</td>
-      </tr>
-      <tr>
-        <td style={{ paddingRight: '32px' }}><b>Access duration</b></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>From</td>
-        <td>{start}</td>
-      </tr>
-      <tr>
-        <td style={spaceUnderStyle}>To</td>
-        <td style={spaceUnderStyle}>{end}</td>
-      </tr>
-      <tr>
-        <td><b>Roles</b></td>
-        <td>{roles[0]}</td>
-      </tr>
-      {roles.slice(1).map(role =>
-        <tr key={role}>
-          <td></td>
-          <td>{role}</td>
+const ReviewStep = ({ targetAccount, start, end, roles, isLoading, error, onClose }) => {
+  let content = null;
+  if (isLoading) {
+    content = (
+      <EmptyState>
+        <EmptyStateIcon icon={() => <Spinner size="lg" />} />
+        <Title headingLevel="h2" size="lg">
+          Submitting access request
+        </Title>
+        <Button variant="link" onClick={onClose}>
+          Close
+        </Button>
+      </EmptyState>
+    );
+  }
+  else if (error) {
+    content = (
+      <EmptyState>
+        <EmptyStateIcon icon={ExclamationCircleIcon} />
+        <Title headingLevel="h2" size="lg">
+          {error.title}
+        </Title>
+        <EmptyStateBody>
+          {error.description}
+        </EmptyStateBody>
+      </EmptyState>
+    );
+  }
+  else {
+    content = (
+      <table>
+        <tr>
+          <td style={spaceUnderStyle}><b>Account number</b></td>
+          <td style={spaceUnderStyle}>{targetAccount}</td>
         </tr>
-      )}
-    </table>
-    {isLoading && <Spinner />}
-  </React.Fragment>
-);
+        <tr>
+          <td style={{ paddingRight: '32px' }}><b>Access duration</b></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>From</td>
+          <td>{start}</td>
+        </tr>
+        <tr>
+          <td style={spaceUnderStyle}>To</td>
+          <td style={spaceUnderStyle}>{end}</td>
+        </tr>
+        <tr>
+          <td><b>Roles</b></td>
+          <td>{roles[0]}</td>
+        </tr>
+        {roles.slice(1).map(role =>
+          <tr key={role}>
+            <td></td>
+            <td>{role}</td>
+          </tr>
+        )}
+      </table>
+    );
+  }
+
+  return (
+    <React.Fragment>
+      <Title headingLevel="h2" style={spaceUnderStyle}>Review details</Title>
+      {content}
+    </React.Fragment>
+  );
+}
 
 const EditRequestModal = ({ requestId, variant, onClose }) => {
   const isEdit = variant === 'edit';
   const isRenew = variant === 'renew';
   const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState('');
   const [user, setUser] = React.useState();
   const [targetAccount, setTargetAccount] = React.useState();
   const [start, setStart] = React.useState(isRenew ? dateFormat(new Date()) : undefined);
@@ -242,9 +282,11 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
         else {
           throw Error("Couldn't get current user. Make sure you're logged in");
         }
-        console.log('details', details);
         if (isEdit || isRenew) {
-          if (details) {
+          if (details.errors) {
+            throw Error(details.errors.map(e => e.detail).join('\n'));
+          }
+          if (details && details.target_account) {
             setTargetAccount(details.target_account);
             setStart(details.start_date);
             if (!isRenew) {
@@ -253,12 +295,7 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
             setRoles(details.roles.map(role => role.display_name));
           }
           else {
-            if (details.errors) {
-              throw Error(details.errors.map(e => e.detail).join('\n'));
-            }
-            else {
-              throw Error(`Could not fetch details for request ${requestId}`);
-            }
+            throw Error(`Could not fetch details for request ${requestId}`);
           }
         }
         setIsLoading(false);
@@ -279,10 +316,11 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
       target_account: targetAccount,
       start_date: start,
       end_date: end,
-      roles
+      roles,
+      status: 'pending'
     };
     fetch(`${API_BASE}/cross-account-requests/${isEdit ? `/${requestId}/` : ''}`, {
-      method: isEdit ? 'PUT' : 'POST',
+      method: (isEdit || isRenew) ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -301,11 +339,13 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
         onClose(true);
       })
       .catch(err => {
-        dispatch(addNotification({
-          variant: 'danger',
-          title: `Could not ${variant} access request`,
-          description: err.message,
-        }));
+        const isInvalidAccount = /Account .* does not exist/.test(err.message);
+        setError({
+          title: isInvalidAccount ? 'Invalid Account Number' : `Could not ${variant} access request`,
+          description: isInvalidAccount
+           ? 'Please return to Step 1: Request details and input a new account number for your request.'
+           : err.message
+        });
         setIsLoading(false);
       });
   };
@@ -314,6 +354,7 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
   const step2Complete = roles.length > 0;
   const steps = [
     {
+      id: 1,
       name: 'Request details',
       component: <RequestDetailsForm
         user={user}
@@ -329,12 +370,14 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
       enableNext: step1Complete
     },
     {
+      id: 2,
       name: 'Select roles',
       component: <MUARolesTable roles={roles} setRoles={setRoles} />,
       enableNext: step2Complete,
       canJumpTo: step1Complete
     },
     {
+      id: 3,
       name: 'Review details',
       component: <ReviewStep
         targetAccount={targetAccount}
@@ -342,6 +385,8 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
         end={end}
         roles={roles}
         isLoading={isLoading}
+        error={error}
+        onClose={() => onClose(false)}
       />,
       canJumpTo: step1Complete && step2Complete,
       enableNext: !isLoading,

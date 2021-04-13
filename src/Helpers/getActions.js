@@ -3,7 +3,7 @@ import { Button, Label } from '@patternfly/react-core';
 import { useDispatch } from 'react-redux'
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { getLabelProps } from './getLabelProps';
-import EditIcon from '@patternfly/react-icons/dist/js/icons/edit-icon';
+import EditAltIcon from '@patternfly/react-icons/dist/js/icons/edit-alt-icon';
 import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
 
 export function getInternalActions(status, requestId, setOpenModal) {
@@ -106,9 +106,9 @@ export function StatusLabel({ requestId, status: statusProp, onLabelClick = () =
           </React.Fragment>
         : label
       }
-      {['approved', 'denied'].includes(status) && !isEditing &&
+      {['approved', 'denied'].includes(status) &&
         <Button variant="plain" aria-label="Edit status" onClick={() => setIsEditing(!isEditing)}>
-          <EditIcon />
+          <EditAltIcon />
         </Button>
       }
     </React.Fragment>

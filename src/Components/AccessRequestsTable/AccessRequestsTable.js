@@ -164,7 +164,6 @@ const AccessRequestsTable = ({ isInternal }) => {
   const onModalClose = isChanged => {
     setOpenModal({ type: null });
     if (isChanged) {
-      console.log('isChanged', isChanged);
       fetchAccessRequests();
     }
   };
