@@ -212,7 +212,7 @@ const ReviewStep = ({ targetAccount, start, end, roles, isLoading, error, setErr
           {error.description}
         </EmptyStateBody>
         {error.title === invalidAccountTitle &&
-          <Button variant="primary" onClick={() => { context.goToStepById(1); setError(null); }}>
+          <Button variant="primary" onClick={() => context.goToStepById(1)}>
             Return to Step 1
           </Button>
         }
@@ -264,7 +264,7 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
   const isEdit = variant === 'edit';
   const isRenew = variant === 'renew';
   const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState('');
+  const [error, setError] = React.useState();
   const [user, setUser] = React.useState();
   const [targetAccount, setTargetAccount] = React.useState();
   const [start, setStart] = React.useState(isRenew ? dateFormat(new Date()) : undefined);
@@ -406,6 +406,7 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
 
   const titleId = `${variant}-request`;
   const descriptionId = `${variant} request`;
+  console.log('error', error);
   return (
     <Modal
       variant="large"
@@ -424,6 +425,9 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
         steps={steps}
         onClose={() => onClose(false)}
         onSave={onSave}
+        onNext={() => setError()}
+        onBack={() => setError()}
+        onGoToStep={() => setError()}
       />
     </Modal>
   );
