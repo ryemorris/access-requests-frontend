@@ -1,0 +1,117 @@
+import React from 'react';
+import { Button, Label } from '@patternfly/react-core';
+import { useDispatch } from 'react-redux'
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
+import { getLabelProps } from './getLabelProps';
+import EditIcon from '@patternfly/react-icons/dist/js/icons/edit-icon';
+import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
+
+export function getInternalActions(status, requestId, setOpenModal) {
+  const items = [];
+  if (status === 'pending') {
+    items.push({
+      title: 'Edit',
+      onClick: () => setOpenModal({ type: 'edit', requestId })
+    });
+    items.push({
+      title: 'Cancel',
+      onClick: () => setOpenModal({ type: 'cancel', requestId })
+    });
+  }
+  else if (status === 'expired') {
+    items.push({
+      title: 'Renew',
+      onClick: () => setOpenModal({ type: 'renew', requestId })
+    });
+  }
+
+  return { items, disable: items.length === 0 };
+}
+
+// https://marvelapp.com/prototype/257je526/screen/74764732
+export function StatusLabel({ requestId, status: statusProp, onLabelClick = () => {}, hideActions }) {
+  const [status, setStatus] = React.useState(statusProp);
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const dispatch = useDispatch();
+
+  function onClick(newStatus) {
+    setIsLoading(true);
+    fetch(`${API_BASE}/cross-account-requests/${requestId}/`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status: newStatus })
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.errors && res.errors.length > 0) {
+          throw Error(res.errors.map(e => e.detail).join('\n'));
+        }
+        dispatch(addNotification({
+          variant: 'success',
+          title: `Request ${newStatus} successfully`,
+        }));
+        setStatus(newStatus);
+        setIsEditing(false);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        dispatch(addNotification({
+          variant: 'danger',
+          title: `There was an error ${newStatus === 'approved' ? 'approving' : 'denying'} your request`,
+          description: err.message,
+        }));
+        setIsLoading(false);
+      });
+  }
+
+  const label = (
+    <Label {...getLabelProps(status)} render={({ content, className }) =>
+      <button className={className} onClick={onLabelClick}>
+        {content}
+      </button>
+    }>
+      {capitalize(status)}
+    </Label>
+  );
+
+  // For internal view
+  if (hideActions) {
+    return label;
+  }
+
+  return (
+    <React.Fragment>
+      {(isEditing || status === 'pending')
+        ?
+          <React.Fragment>
+            <Button
+              className="pf-u-mr-md"
+              isDisabled={isLoading || status === 'approved'}
+              variant="primary"
+              onClick={() => onClick("approved")}
+            >
+              Approve
+            </Button>
+            <Button
+              className="pf-u-mr-md"
+              isDisabled={isLoading || status === 'denied'}
+              variant="danger"
+              onClick={() => onClick("denied")}
+            >
+              Deny
+            </Button>
+          </React.Fragment>
+        : label
+      }
+      {['approved', 'denied'].includes(status) && !isEditing &&
+        <Button variant="plain" aria-label="Edit status" onClick={() => setIsEditing(!isEditing)}>
+          <EditIcon />
+        </Button>
+      }
+    </React.Fragment>
+  );
+}
+

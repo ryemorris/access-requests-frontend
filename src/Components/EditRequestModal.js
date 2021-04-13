@@ -41,6 +41,8 @@ const getLabelIcon = field => (
 
 const today = new Date();
 today.setDate(today.getDate() - 1);
+const maxStartDate = new Date();
+maxStartDate.setDate(maxStartDate.getDate() + 60);
 const dateFormat = date => date.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
 const dateParse = date => {
   const split = date.split('/');
@@ -65,10 +67,16 @@ const RequestDetailsForm = ({
 }) => {
   let [startDate, setStartDate] = React.useState();
 
+  // https://github.com/RedHatInsights/insights-rbac/blob/master/rbac/api/cross_access/model.py#L49
   const startValidator = date => {
     if (isValidDate(date)) {
       if (date < today) {
+        setEnd('');
         return 'Start date must be today or later';
+      }
+      if (date > maxStartDate) {
+        setEnd('');
+        return 'Start date must be within 60 days of today';
       }
     }
 
@@ -81,13 +89,13 @@ const RequestDetailsForm = ({
         setEnd('');
         return 'End date must be after from date';
       }
+    }
 
-      const maxToDate = new Date(startDate);
-      maxToDate.setFullYear(maxToDate.getFullYear() + 1);
-      if (date > maxToDate) {
-        setEnd('');
-        return 'Access duration cannot be longer than one year';
-      }
+    const maxToDate = new Date(startDate);
+    maxToDate.setFullYear(maxToDate.getFullYear() + 1);
+    if (date > maxToDate) {
+      setEnd('');
+      return 'Access duration may not be longer than one year';
     }
 
     return '';
@@ -96,7 +104,7 @@ const RequestDetailsForm = ({
   const onStartChange = (str, date) => {
     setStartDate(new Date(date));
     setStart(str);
-    if (isValidDate(date)) {
+    if (isValidDate(date) && !startValidator(date)) {
       date.setDate(date.getDate() + 7);
       setEnd(dateFormat(date));
     }
@@ -204,22 +212,23 @@ const ReviewStep = ({ targetAccount, start, end, roles, isLoading }) => (
   </React.Fragment>
 );
 
-const EditRequestModal = ({ row = [], variant, onClose }) => {
+const EditRequestModal = ({ requestId, variant, onClose }) => {
+  const isEdit = variant === 'edit';
+  const isRenew = variant === 'renew';
   const [isLoading, setIsLoading] = React.useState(true);
   const [user, setUser] = React.useState();
   const [targetAccount, setTargetAccount] = React.useState();
-  const [start, setStart] = React.useState(variant === 'renew' ? dateFormat(new Date()) : undefined);
+  const [start, setStart] = React.useState(isRenew ? dateFormat(new Date()) : undefined);
   const [end, setEnd] = React.useState();
   const [roles, setRoles] = React.useState([]);
   const dispatch = useDispatch();
 
-  const isEdit = variant === 'edit';
   // We need to be logged in (and see the username) which is an async request.
   // If we're editing we also need to fetch the roles
   React.useEffect(() => {
     const userPromise = window.insights.chrome.auth.getUser();
-    const detailsPromise = isEdit
-      ? fetch(`${API_BASE}/cross-account-requests/${row[0]}/`).then(res => res.json())
+    const detailsPromise = (isEdit || isRenew)
+      ? fetch(`${API_BASE}/cross-account-requests/${requestId}/`).then(res => res.json())
       : new Promise(res => res(true));
 
     Promise.all([
@@ -233,11 +242,14 @@ const EditRequestModal = ({ row = [], variant, onClose }) => {
         else {
           throw Error("Couldn't get current user. Make sure you're logged in");
         }
-        if (isEdit) {
+        console.log('details', details);
+        if (isEdit || isRenew) {
           if (details) {
             setTargetAccount(details.target_account);
             setStart(details.start_date);
-            setEnd(details.end_date);
+            if (!isRenew) {
+              setEnd(details.end_date);
+            }
             setRoles(details.roles.map(role => role.display_name));
           }
           else {
@@ -245,7 +257,7 @@ const EditRequestModal = ({ row = [], variant, onClose }) => {
               throw Error(details.errors.map(e => e.detail).join('\n'));
             }
             else {
-              throw Error(`Could not fetch details for request ${row[0]}`);
+              throw Error(`Could not fetch details for request ${requestId}`);
             }
           }
         }
@@ -256,7 +268,6 @@ const EditRequestModal = ({ row = [], variant, onClose }) => {
           variant: 'danger',
           title: 'Could not load access request',
           description: err.message,
-          dismissable: true
         }));
       });
   }, []);
@@ -270,7 +281,7 @@ const EditRequestModal = ({ row = [], variant, onClose }) => {
       end_date: end,
       roles
     };
-    fetch(`${API_BASE}/cross-account-requests/${isEdit ? `/${row[0]}/` : ''}`, {
+    fetch(`${API_BASE}/cross-account-requests/${isEdit ? `/${requestId}/` : ''}`, {
       method: isEdit ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -284,9 +295,8 @@ const EditRequestModal = ({ row = [], variant, onClose }) => {
         }
         dispatch(addNotification({
           variant: 'success',
-          title: `${variant === 'edit' ? 'Edited' : 'Created'} access request`,
+          title: `${isEdit ? 'Edited' : 'Created'} access request`,
           description: res.request_id,
-          dismissable: true
         }));
         onClose(true);
       })
@@ -295,7 +305,6 @@ const EditRequestModal = ({ row = [], variant, onClose }) => {
           variant: 'danger',
           title: `Could not ${variant} access request`,
           description: err.message,
-          dismissable: true
         }));
         setIsLoading(false);
       });
@@ -314,7 +323,7 @@ const EditRequestModal = ({ row = [], variant, onClose }) => {
         setStart={setStart}
         end={end}
         setEnd={setEnd}
-        disableAccount={variant === 'edit' || variant === 'renew'}
+        disableAccount={isEdit || isRenew}
         isLoading={isLoading}
       />,
       enableNext: step1Complete

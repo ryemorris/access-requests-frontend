@@ -40,7 +40,7 @@ module.exports = (_env, argv) => {
   const appDeployment = (isProduction && betaBranches.includes(gitBranch)) ? '/beta/apps' : '/apps';
   const publicPath = `${appDeployment}/${name}/`;
   const entry = path.join(srcDir, 'entry.js');
-  const port = 8002;
+  const port = 3000;
 
   console.log('~~~Using variables~~~');
   console.log(`isProduction: ${isProduction}`);

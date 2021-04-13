@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { PageSection, Title } from '@patternfly/react-core';
 import AccessRequestsTable from '../Components/AccessRequestsTable/AccessRequestsTable';
 
-const AccessRequestsPage = () => {
+const AccessRequestsPage = ({ isInternal }) => {
   return (
     <React.Fragment>
       <PageSection variant="light">
@@ -11,7 +11,7 @@ const AccessRequestsPage = () => {
         <p>Below is a list of all submitted requests for read only account access.</p>
       </PageSection>
       <PageSection padding={{ default: 'noPadding' }}>
-        <AccessRequestsTable />
+        <AccessRequestsTable isInternal={isInternal} />
       </PageSection>
     </React.Fragment>
   );

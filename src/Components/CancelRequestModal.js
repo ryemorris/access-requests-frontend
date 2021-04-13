@@ -24,7 +24,6 @@ const CancelRequestModal = ({ requestId, onClose }) => {
         dispatch(addNotification({
           variant: 'success',
           title: 'Request cancelled successfully',
-          dismissable: true
         }));
         setIsLoading(false);
         onClose(true);
@@ -34,9 +33,9 @@ const CancelRequestModal = ({ requestId, onClose }) => {
           variant: 'danger',
           title: 'There was an error cancelling your request',
           description: err.message,
-          dismissable: true
         }));
         setIsLoading(false);
+        onClose(true);
       });
   };
   return (

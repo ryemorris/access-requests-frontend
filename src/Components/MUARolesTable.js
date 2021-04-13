@@ -17,8 +17,9 @@ import {
   Chip,
   DropdownToggleCheckbox,
   Spinner,
+  Tooltip
 } from '@patternfly/react-core';
-import { TableComposable, Thead, Tbody, Tr, Th, Td, TableText } from '@patternfly/react-table';
+import { TableComposable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
@@ -32,7 +33,7 @@ let applicationsCache = [];
 const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => {
   const columns = ['Role name', 'Role description', 'Permissions'];
   const [rows, setRows] = React.useState(Array.from(rolesCache));
-  const [applications, setApplications] = React.useState([]);
+  const [applications, setApplications] = React.useState(applicationsCache);
   React.useEffect(() => {
     if (rolesCache.length === 0 || applicationsCache.length === 0) {
       fetch(`${API_BASE}/roles/?limit=9999&order_by=display_name&add_fields=groups_in_count`)
@@ -62,7 +63,6 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
           variant: 'danger',
           title: 'Could not fetch roles list',
           description: err.message,
-          dismissable: true
         })));
     }
   }, []);
@@ -82,14 +82,14 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
   const [filterColumn, setFilterColumn] = React.useState(columns[0]);
   const [isSelectOpen, setIsSelectOpen] = React.useState(false);
   const [appSelections, setAppSelections] = React.useState([]);
+  const [nameFilterInput, setNameFilterInput] = React.useState('');
   const [nameFilter, setNameFilter] = React.useState('');
-  const [nameFilters, setNameFilters] = React.useState([]);
   const selectLabelId = 'filter-application';
   const selectPlaceholder = 'Filter by application';
 
   const filteredRows = rows
     .filter(row => appSelections.length > 0 ? row.applications.find(app => appSelections.includes(app)) : true)
-    .filter(row => nameFilters.length > 0 ? nameFilters.some(name => row.name.toLowerCase().includes(name)) : true);
+    .filter(row => row.name.toLowerCase().includes(nameFilter));
 
   // Pagination
   const [page, setPage] = React.useState(1);
@@ -150,8 +150,8 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
     }
   };
 
-  const isReadOnly = setSelectedRoles === undefined
-  const roleToolbar = isReadOnly ? null : (
+  const isExternal = setSelectedRoles === undefined
+  const roleToolbar = isExternal ? null : (
     <Toolbar id="access-requests-roles-table-toolbar">
       <ToolbarContent>
         <ToolbarItem>
@@ -222,13 +222,13 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
                     }
                   }}
                   isOpen={isSelectOpen}
-                  selections={Array.from(appSelections)}
+                  selections={appSelections}
                   isCheckboxSelectionBadgeHidden
                   placeholderText={selectPlaceholder}
                   style={{ maxHeight: '400px', overflowY: 'auto' }}
                 >
                   {applications.map(app =>
-                    <SelectOption key={app} value={app}>{capitalize(app)}</SelectOption>
+                    <SelectOption key={app} value={app}>{capitalize(app.replace(/-/g, ' '))}</SelectOption>
                   )}
                 </Select>
               </React.Fragment>
@@ -236,8 +236,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
                 style={{ display: 'flex' }}
                 onSubmit={ev => {
                   ev.preventDefault();
-                  setNameFilters(nameFilters.concat(nameFilter));
-                  setNameFilter('');
+                  setNameFilter(nameFilterInput);
                 }}
               >
                 <TextInput
@@ -245,8 +244,8 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
                   id="rolesSearch"
                   type="search"
                   aria-label="Search input"
-                  value={nameFilter}
-                  onChange={val => setNameFilter(val)}
+                  value={nameFilterInput}
+                  onChange={val => setNameFilterInput(val)}
                 />
                 <Button variant="control" type="submit" aria-label="Search button for roles input">
                   <SearchIcon />
@@ -259,15 +258,13 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
           <AccessRequestsPagination id="top" />
         </ToolbarItem>
       </ToolbarContent>
-      {(appSelections.length > 0 || nameFilters.length > 0) &&
+      {(appSelections.length > 0 || nameFilter) &&
         <ToolbarContent>
-          {nameFilters.length > 0 &&
+          {nameFilter &&
             <ChipGroup categoryName="Role name">
-              {nameFilters.map(name =>
-                <Chip key={name} onClick={() => setNameFilters(nameFilters.filter(s => s !== name))}>
-                  {name}
-                </Chip>
-              )}
+              <Chip onClick={() => setNameFilter('')}>
+                {nameFilter}
+              </Chip>
             </ChipGroup>
           }
           {appSelections.length > 0 &&
@@ -279,14 +276,9 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
               )}
             </ChipGroup>
           }
-          {(appSelections.length > 0 || nameFilters.length > 0) &&
-            <Button
-              variant="link"
-              onClick={() => { setAppSelections([]); setNameFilters([]); }}
-            >
-              Clear filters
-            </Button>
-          }
+          <Button variant="link" onClick={() => { setAppSelections([]); setNameFilter(''); }}>
+            Clear filters
+          </Button>
         </ToolbarContent>
       }
     </Toolbar>
@@ -308,7 +300,6 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
           variant: 'danger',
           title: `Could not fetch permission list for ${row.name}.`,
           description: err.message,
-          dismissable: true
         })));
     }
   };
@@ -316,7 +307,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
     <TableComposable aria-label="My user access roles" variant="compact">
       <Thead>
         <Tr>
-          <Th />
+          {!isExternal && <Th />}
           <Th
             width={30}
             sort={{ sortBy: { index: activeSortIndex, direction: activeSortDirection }, onSort, columnIndex: 'name' }}
@@ -341,20 +332,23 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
       {pagedRows.map((row, rowIndex) => (
         <Tbody key={rowIndex}>
           <Tr>
-            <Td
-              {...isReadOnly ? {} : {select:{
-                rowIndex,
-                onSelect,
-                isSelected: selectedRoles.find(r => r === row.display_name)
-              }}}
-            />
+            {!isExternal &&
+              <Td select={{
+                  rowIndex,
+                  onSelect,
+                  isSelected: selectedRoles.find(r => r === row.display_name)
+                }}
+              />
+            }
             <Td dataLabel={columns[0]}>
               {row.display_name}
             </Td>
-            <Td dataLabel={columns[1]}>
-              <TableText wrapModifier="truncate">
-                {row.description}
-              </TableText>
+            <Td dataLabel={columns[1]} className="pf-m-truncate">
+              <Tooltip entryDelay={1000} content={row.description}>
+                <span className="pf-m-truncate pf-c-table__text">
+                  {row.description}
+                </span>
+              </Tooltip>
             </Td>
             <Td dataLabel={columns[2]} className={css("pf-c-table__compound-expansion-toggle", row.isExpanded && "pf-m-expanded")}>
               <button type="button" className="pf-c-table__button" onClick={() => onExpand(row)}>
@@ -363,7 +357,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
             </Td>
           </Tr>
           <Tr isExpanded={row.isExpanded} borders={false}>
-            <Td />
+            {!isExternal && <Td />}
             <Td colSpan={3}>
               <TableComposable isCompact className="pf-m-no-border-rows">
                 <Thead>
@@ -401,7 +395,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
 
   return (
     <React.Fragment>
-      {!isReadOnly && 
+      {!isExternal && 
         <React.Fragment>
           <Title headingLevel="h2">Select roles</Title>
           <p>Select the roles you would like access to.</p>
@@ -411,7 +405,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
         ? <React.Fragment>
             {roleToolbar}
             {roleTable}
-            {isReadOnly && <AccessRequestsPagination id="bottom" />}
+            {isExternal && <AccessRequestsPagination id="bottom" />}
           </React.Fragment>
         : <Spinner size="lg" />
       }
