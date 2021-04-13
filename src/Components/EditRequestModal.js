@@ -185,7 +185,7 @@ const RequestDetailsForm = ({
 // Can't use CSS with @redhat-cloud-services/frontend-components-config because it's scoped to <main> content
 // rather than Modal content...
 const spaceUnderStyle = { paddingBottom: '16px' };
-const ReviewStep = ({ targetAccount, start, end, roles, isLoading, error, onClose }) => {
+const ReviewStep = ({ targetAccount, start, end, roles, isLoading, error, setError, onClose }) => {
   let content = null;
   if (isLoading) {
     content = (
@@ -212,7 +212,7 @@ const ReviewStep = ({ targetAccount, start, end, roles, isLoading, error, onClos
           {error.description}
         </EmptyStateBody>
         {error.title === invalidAccountTitle &&
-          <Button variant="primary" onClick={() => context.goToStepById(1)}>
+          <Button variant="primary" onClick={() => { context.goToStepById(1); setError(null); }}>
             Return to Step 1
           </Button>
         }
@@ -395,6 +395,7 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
         roles={roles}
         isLoading={isLoading}
         error={error}
+        setError={setError}
         onClose={() => onClose(false)}
       />,
       canJumpTo: step1Complete && step2Complete,

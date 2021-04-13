@@ -31,6 +31,7 @@ let rolesCache = [];
 let applicationsCache = [];
 
 const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => {
+  const isReadOnly = setSelectedRoles === undefined
   const columns = ['Role name', 'Role description', 'Permissions'];
   const [rows, setRows] = React.useState(Array.from(rolesCache));
   const [applications, setApplications] = React.useState(applicationsCache);
@@ -87,9 +88,11 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
   const selectLabelId = 'filter-application';
   const selectPlaceholder = 'Filter by application';
 
+  const selectedNames = selectedRoles.map(role => role.display_name);
   const filteredRows = rows
     .filter(row => appSelections.length > 0 ? row.applications.find(app => appSelections.includes(app)) : true)
-    .filter(row => row.name.toLowerCase().includes(nameFilter));
+    .filter(row => row.name.toLowerCase().includes(nameFilter))
+    .filter(row => isReadOnly ? selectedNames.includes(row.display_name) : true);
 
   // Pagination
   const [page, setPage] = React.useState(1);
@@ -118,10 +121,10 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
       } else {
         // string sort
         if (activeSortDirection === 'asc') {
-          return a[activeSortIndex].localeCompare(b[activeSortIndex]);
+          return (a[activeSortIndex] + '').localeCompare(b[activeSortIndex]);
         }
 
-        return b[activeSortIndex].localeCompare(a[activeSortIndex]);
+        return (b[activeSortIndex] + '').localeCompare(a[activeSortIndex]);
       }
     })
     .slice((page - 1) * perPage, page * perPage);
@@ -150,8 +153,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
     }
   };
 
-  const isExternal = setSelectedRoles === undefined
-  const roleToolbar = isExternal ? null : (
+  const roleToolbar = isReadOnly ? null : (
     <Toolbar id="access-requests-roles-table-toolbar">
       <ToolbarContent>
         <ToolbarItem>
@@ -307,7 +309,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
     <TableComposable aria-label="My user access roles" variant="compact">
       <Thead>
         <Tr>
-          {!isExternal && <Th />}
+          {!isReadOnly && <Th />}
           <Th
             width={30}
             sort={{ sortBy: { index: activeSortIndex, direction: activeSortDirection }, onSort, columnIndex: 'name' }}
@@ -332,7 +334,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
       {pagedRows.map((row, rowIndex) => (
         <Tbody key={rowIndex}>
           <Tr>
-            {!isExternal &&
+            {!isReadOnly &&
               <Td select={{
                   rowIndex,
                   onSelect,
@@ -357,7 +359,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
             </Td>
           </Tr>
           <Tr isExpanded={row.isExpanded} borders={false}>
-            {!isExternal && <Td />}
+            {!isReadOnly && <Td />}
             <Td colSpan={3}>
               <TableComposable isCompact className="pf-m-no-border-rows">
                 <Thead>
@@ -395,7 +397,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
 
   return (
     <React.Fragment>
-      {!isExternal && 
+      {!isReadOnly && 
         <React.Fragment>
           <Title headingLevel="h2">Select roles</Title>
           <p>Select the roles you would like access to.</p>
@@ -405,7 +407,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
         ? <React.Fragment>
             {roleToolbar}
             {roleTable}
-            {isExternal && <AccessRequestsPagination id="bottom" />}
+            {isReadOnly && <AccessRequestsPagination id="bottom" />}
           </React.Fragment>
         : <Spinner size="lg" />
       }
