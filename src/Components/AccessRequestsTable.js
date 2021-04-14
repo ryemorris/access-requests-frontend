@@ -34,6 +34,10 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import { Link, useRouteMatch } from 'react-router-dom';
 import { getInternalActions, StatusLabel } from '../Helpers/getActions';
 
+function uncapitalize(input) {
+  return input[0].toLowerCase() + input.substring(1);
+}
+
 const statuses = [
   'pending',
   'approved',
@@ -215,7 +219,7 @@ const AccessRequestsTable = ({ isInternal }) => {
   }
 
   const selectLabelId = 'filter-status';
-  const selectPlaceholder = `Filter by ${columns[columns.length - 1].toLowerCase()}`;
+  const selectPlaceholder = `Filter by ${uncapitalize(columns[columns.length - 1])}`;
   const FilterTextForm = ({ colName, value, setValue }) => {
     const [inputValue, setInputValue] = React.useState(value);
     return (

@@ -7,7 +7,7 @@
   "main": "lib/lib.js",
   "module": "lib/lib.js",
   "scripts": {
-    "build": "webpack --mode=production && babel src --out-dir lib",
+    "build": "webpack --mode=production && rm -rf lib && babel src --out-dir lib",
     "deploy": "npm run build",
     "lint": "true",
     "lint:js": "eslint config src",

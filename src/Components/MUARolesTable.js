@@ -246,6 +246,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
                   id="rolesSearch"
                   type="search"
                   aria-label="Search input"
+                  placeholder="Filter by role name"
                   value={nameFilterInput}
                   onChange={val => setNameFilterInput(val)}
                 />

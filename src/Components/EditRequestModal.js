@@ -150,7 +150,7 @@ const RequestDetailsForm = ({
         isRequired
         labelIcon={getLabelIcon('account number')}
         helperText="Enter the account number you would like access to"
-        helperTextInvalid="Please enter a valid account id"
+        helperTextInvalid="Please enter a valid account number"
         validated={validatedAccount}
       >
         <TextInput
