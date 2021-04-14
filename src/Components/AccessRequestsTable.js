@@ -391,7 +391,7 @@ const AccessRequestsTable = ({ isInternal }) => {
           : rows.map((row, rowIndex) =>
             <Tr key={rowIndex}>
               <Td dataLabel={columns[0]}>
-                <Link to={`${url}${row[0]}`}>{row[0]}</Link>
+                <Link to={`${url}${url.endsWith('/') ? '' : '/'}${row[0]}`}>{row[0]}</Link>
               </Td>
               <Td dataLabel={columns[1]}>
                 {row[1]}
