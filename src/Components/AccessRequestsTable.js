@@ -31,7 +31,7 @@ import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 import PlusCircleIcon from '@patternfly/react-icons/dist/js/icons/plus-circle-icon';
 import { useDispatch } from 'react-redux'
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
-import { Link } from 'react-router-dom';
+import { Link, useRouteMatch } from 'react-router-dom';
 import { getInternalActions, StatusLabel } from '../Helpers/getActions';
 
 const statuses = [
@@ -363,6 +363,7 @@ const AccessRequestsTable = ({ isInternal }) => {
 
     return [0, 6].includes(columnIndex) ? 20 : 10;
   }
+  const { url } = useRouteMatch();
   const table = (
     <TableComposable aria-label="Access requests table" variant="compact">
       <Thead>
@@ -390,7 +391,7 @@ const AccessRequestsTable = ({ isInternal }) => {
           : rows.map((row, rowIndex) =>
             <Tr key={rowIndex}>
               <Td dataLabel={columns[0]}>
-                <Link to={`/${row[0]}`}>{row[0]}</Link>
+                <Link to={`${url}${row[0]}`}>{row[0]}</Link>
               </Td>
               <Td dataLabel={columns[1]}>
                 {row[1]}
