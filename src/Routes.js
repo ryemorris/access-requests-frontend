@@ -6,7 +6,7 @@ const AccessRequestsPage = lazy(() => import('./Routes/AccessRequestsPage'));
 const AccessRequestDetailsPage = lazy(() => import('./Routes/AccessRequestDetailsPage'));
 
 export const Routes = () => {
-  const [isInternal, setIsInternal] = React.useState(true);
+  const isInternal = true;
   const AccessRequestDetailsPageWrapper = ({ match }) =>
     <AccessRequestDetailsPage requestId={match.params.requestId} isInternal={isInternal} />;
   const AccessRequestsPageWrapper = () =>
@@ -14,7 +14,6 @@ export const Routes = () => {
 
   return (
     <Suspense fallback={<Bullseye><Spinner /></Bullseye>}>
-      <ToggleSwitch id="test-switch" label="Internal view" labelOff="External view" isChecked={isInternal} onChange={() => setIsInternal(!isInternal)} />
       <Switch>
         <Route path="/" exact component={AccessRequestsPageWrapper} />
         <Route path="/:requestId" exact component={AccessRequestDetailsPageWrapper} />
