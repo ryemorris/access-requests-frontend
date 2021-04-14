@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { PageSection, Title } from '@patternfly/react-core';
-import AccessRequestsTable from '../Components/AccessRequestsTable/AccessRequestsTable';
+import AccessRequestsTable from '../Components/AccessRequestsTable';
 
 const AccessRequestsPage = ({ isInternal }) => {
   return (

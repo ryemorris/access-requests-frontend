@@ -71,9 +71,11 @@ const RequestDetailsForm = ({
   end,
   setEnd,
   disableAccount,
-  isLoading
+  isLoading,
+  error
 }) => {
   let [startDate, setStartDate] = React.useState();
+  const [validatedAccount, setValidatedAccount] = React.useState(error ? 'error' : 'default');
 
   // https://github.com/RedHatInsights/insights-rbac/blob/master/rbac/api/cross_access/model.py#L49
   const startValidator = date => {
@@ -94,7 +96,6 @@ const RequestDetailsForm = ({
   const endValidator = date => {
     if (isValidDate(startDate)) {
       if (startDate > date) {
-        setEnd('');
         return 'End date must be after from date';
       }
     }
@@ -102,7 +103,6 @@ const RequestDetailsForm = ({
     const maxToDate = new Date(startDate);
     maxToDate.setFullYear(maxToDate.getFullYear() + 1);
     if (date > maxToDate) {
-      setEnd('');
       return 'Access duration may not be longer than one year';
     }
 
@@ -121,6 +121,15 @@ const RequestDetailsForm = ({
     }
   };
 
+  const onEndChange = (str, date) => {
+    if (endValidator(date)) {
+      setEnd('');
+    }
+    else {
+      setEnd(str);
+    }
+  };
+
   return (
     <Form onSubmit={ev => ev.preventDefault()} isDisabled={isLoading}>
       <Title headingLevel="h2">Request details</Title>
@@ -136,13 +145,21 @@ const RequestDetailsForm = ({
           </FormGroup>
         </SplitItem>
       </Split>
-      <FormGroup label="Account number" isRequired labelIcon={getLabelIcon('account number')} helperText="Enter the account number you would like access to">
+      <FormGroup
+        label="Account number"
+        isRequired
+        labelIcon={getLabelIcon('account number')}
+        helperText="Enter the account number you would like access to"
+        helperTextInvalid="Please enter a valid account id"
+        validated={validatedAccount}
+      >
         <TextInput
           id="account-number"
           value={targetAccount}
-          onChange={val => setTargetAccount(val)}
+          onChange={val => { setTargetAccount(val); setValidatedAccount('default'); }}
           isRequired
-          placeholder="865392"
+          placeholder="Example, 8675309"
+          validated={validatedAccount}
           isDisabled={disableAccount}
         />
       </FormGroup>
@@ -171,7 +188,7 @@ const RequestDetailsForm = ({
               dateFormat={dateFormat}
               dateParse={dateParse}
               placeholder="mm/dd/yyyy"
-              onChange={date => setEnd(date)}
+              onChange={onEndChange}
               validators={[endValidator]}
               rangeStart={start}
             />
@@ -204,7 +221,7 @@ const ReviewStep = ({ targetAccount, start, end, roles, isLoading, error, setErr
     const context = React.useContext(WizardContextConsumer);
     content = (
       <EmptyState>
-        <EmptyStateIcon icon={ExclamationCircleIcon} />
+        <EmptyStateIcon icon={ExclamationCircleIcon} color="#C9190B" />
         <Title headingLevel="h2" size="lg">
           {error.title}
         </Title>
@@ -221,40 +238,42 @@ const ReviewStep = ({ targetAccount, start, end, roles, isLoading, error, setErr
   }
   else {
     content = (
-      <table>
-        <tr>
-          <td style={spaceUnderStyle}><b>Account number</b></td>
-          <td style={spaceUnderStyle}>{targetAccount}</td>
-        </tr>
-        <tr>
-          <td style={{ paddingRight: '32px' }}><b>Access duration</b></td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>From</td>
-          <td>{start}</td>
-        </tr>
-        <tr>
-          <td style={spaceUnderStyle}>To</td>
-          <td style={spaceUnderStyle}>{end}</td>
-        </tr>
-        <tr>
-          <td><b>Roles</b></td>
-          <td>{roles[0]}</td>
-        </tr>
-        {roles.slice(1).map(role =>
-          <tr key={role}>
-            <td></td>
-            <td>{role}</td>
+      <React.Fragment>
+        <Title headingLevel="h2" style={spaceUnderStyle}>Review details</Title>
+        <table>
+          <tr>
+            <td style={spaceUnderStyle}><b>Account number</b></td>
+            <td style={spaceUnderStyle}>{targetAccount}</td>
           </tr>
-        )}
-      </table>
+          <tr>
+            <td style={{ paddingRight: '32px' }}><b>Access duration</b></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>From</td>
+            <td>{start}</td>
+          </tr>
+          <tr>
+            <td style={spaceUnderStyle}>To</td>
+            <td style={spaceUnderStyle}>{end}</td>
+          </tr>
+          <tr>
+            <td><b>Roles</b></td>
+            <td>{roles[0]}</td>
+          </tr>
+          {roles.slice(1).map(role =>
+            <tr key={role}>
+              <td></td>
+              <td>{role}</td>
+            </tr>
+          )}
+        </table>
+      </React.Fragment>
     );
   }
 
   return (
     <React.Fragment>
-      <Title headingLevel="h2" style={spaceUnderStyle}>Review details</Title>
       {content}
     </React.Fragment>
   );
@@ -371,6 +390,7 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
         setEnd={setEnd}
         disableAccount={isEdit}
         isLoading={isLoading}
+        error={error}
       />,
       enableNext: step1Complete
     },

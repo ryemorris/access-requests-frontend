@@ -62,11 +62,7 @@ export function StatusLabel({ requestId, status: statusProp, onLabelClick = () =
   }
 
   const label = (
-    <Label {...getLabelProps(status)} render={({ content, className }) =>
-      <button className={className} onClick={onLabelClick}>
-        {content}
-      </button>
-    }>
+    <Label {...getLabelProps(status)}>
       {capitalize(status)}
     </Label>
   );

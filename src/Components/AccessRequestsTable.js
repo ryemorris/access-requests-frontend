@@ -23,8 +23,8 @@ import {
   Title
 } from '@patternfly/react-core';
 import { TableComposable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
-import CancelRequestModal from '../CancelRequestModal';
-import EditRequestModal from '../EditRequestModal';
+import CancelRequestModal from './CancelRequestModal';
+import EditRequestModal from './EditRequestModal';
 import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
@@ -32,7 +32,7 @@ import PlusCircleIcon from '@patternfly/react-icons/dist/js/icons/plus-circle-ic
 import { useDispatch } from 'react-redux'
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { Link } from 'react-router-dom';
-import { getInternalActions, StatusLabel } from '../../Helpers/getActions';
+import { getInternalActions, StatusLabel } from '../Helpers/getActions';
 
 const statuses = [
   'pending',
@@ -230,7 +230,7 @@ const AccessRequestsTable = ({ isInternal }) => {
           name={`${colName}-filter`}
           id={`${colName}-filter`}
           type="search"
-          placeholder={`Filter by ${colName}`}
+          placeholder={`Filter by ${colName.toLowerCase()}`}
           aria-label={`${colName} search input`}
           value={inputValue}
           onChange={val => setInputValue(val)}

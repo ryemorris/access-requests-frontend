@@ -76,7 +76,7 @@ const AccessRequestDetailsPage = ({ requestId, isInternal }) => {
               {requestId}
             </Title>
           </FlexItem>
-          {isInternal &&
+          {isInternal && actions.items.length > 0 &&
             <FlexItem alignSelf={{ default: "alignRight" }}>
               <Dropdown
                 position="right"

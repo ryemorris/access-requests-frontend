@@ -5,8 +5,10 @@ import { Bullseye, Spinner, Switch as ToggleSwitch } from '@patternfly/react-cor
 const AccessRequestsPage = lazy(() => import('./Routes/AccessRequestsPage'));
 const AccessRequestDetailsPage = lazy(() => import('./Routes/AccessRequestDetailsPage'));
 
+const isDev = process.env.NODE_ENV !== 'production';
+
 export const Routes = () => {
-  const isInternal = true;
+  const [isInternal, setIsInternal] = React.useState(true);
   const AccessRequestDetailsPageWrapper = ({ match }) =>
     <AccessRequestDetailsPage requestId={match.params.requestId} isInternal={isInternal} />;
   const AccessRequestsPageWrapper = () =>
@@ -14,6 +16,14 @@ export const Routes = () => {
 
   return (
     <Suspense fallback={<Bullseye><Spinner /></Bullseye>}>
+    {isDev &&
+      <ToggleSwitch
+        id="toggle-view"
+        label="Internal view"
+        labelOff="External view"
+        value={isInternal}
+        onChange={() => setIsInternal(!isInternal)} />
+    }
       <Switch>
         <Route path="/" exact component={AccessRequestsPageWrapper} />
         <Route path="/:requestId" exact component={AccessRequestDetailsPageWrapper} />

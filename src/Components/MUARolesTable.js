@@ -360,7 +360,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
           </Tr>
           <Tr isExpanded={row.isExpanded} borders={false}>
             {!isReadOnly && <Td />}
-            <Td colSpan={3}>
+            <Td className="pf-u-p-0" colSpan={3}>
               <TableComposable isCompact className="pf-m-no-border-rows">
                 <Thead>
                   <Tr>
