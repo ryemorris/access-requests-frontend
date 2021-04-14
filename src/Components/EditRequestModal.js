@@ -262,12 +262,11 @@ const ReviewStep = ({ targetAccount, start, end, roles, isLoading, error, setErr
 
 const EditRequestModal = ({ requestId, variant, onClose }) => {
   const isEdit = variant === 'edit';
-  const isRenew = variant === 'renew';
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState();
   const [user, setUser] = React.useState();
   const [targetAccount, setTargetAccount] = React.useState();
-  const [start, setStart] = React.useState(isRenew ? dateFormat(new Date()) : undefined);
+  const [start, setStart] = React.useState();
   const [end, setEnd] = React.useState();
   const [roles, setRoles] = React.useState([]);
   const dispatch = useDispatch();
@@ -276,7 +275,7 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
   // If we're editing we also need to fetch the roles
   React.useEffect(() => {
     const userPromise = window.insights.chrome.auth.getUser();
-    const detailsPromise = (isEdit || isRenew)
+    const detailsPromise = isEdit
       ? fetch(`${API_BASE}/cross-account-requests/${requestId}/`).then(res => res.json())
       : new Promise(res => res(true));
 
@@ -291,16 +290,14 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
         else {
           throw Error("Couldn't get current user. Make sure you're logged in");
         }
-        if (isEdit || isRenew) {
+        if (isEdit) {
           if (details.errors) {
             throw Error(details.errors.map(e => e.detail).join('\n'));
           }
           if (details && details.target_account) {
             setTargetAccount(details.target_account);
             setStart(details.start_date);
-            if (!isRenew) {
-              setEnd(details.end_date);
-            }
+            setEnd(details.end_date);
             setRoles(details.roles.map(role => role.display_name));
           }
           else {
@@ -326,10 +323,9 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
       start_date: start,
       end_date: end,
       roles,
-      status: 'pending'
     };
     fetch(`${API_BASE}/cross-account-requests/${isEdit ? `/${requestId}/` : ''}`, {
-      method: (isEdit || isRenew) ? 'PUT' : 'POST',
+      method: isEdit ? 'PUT' : 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -373,7 +369,7 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
         setStart={setStart}
         end={end}
         setEnd={setEnd}
-        disableAccount={isEdit || isRenew}
+        disableAccount={isEdit}
         isLoading={isLoading}
       />,
       enableNext: step1Complete
@@ -406,7 +402,6 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
 
   const titleId = `${variant}-request`;
   const descriptionId = `${variant} request`;
-  console.log('error', error);
   return (
     <Modal
       variant="large"

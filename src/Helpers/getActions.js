@@ -18,12 +18,6 @@ export function getInternalActions(status, requestId, setOpenModal) {
       onClick: () => setOpenModal({ type: 'cancel', requestId })
     });
   }
-  else if (status === 'expired') {
-    items.push({
-      title: 'Renew',
-      onClick: () => setOpenModal({ type: 'renew', requestId })
-    });
-  }
 
   return { items, disable: items.length === 0 };
 }

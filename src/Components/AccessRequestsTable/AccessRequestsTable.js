@@ -174,7 +174,7 @@ const AccessRequestsTable = ({ isInternal }) => {
           requestId={openModal.requestId}
           onClose={onModalClose}
         />}
-      {['edit', 'renew', 'create'].includes(openModal.type) &&
+      {['edit', 'create'].includes(openModal.type) &&
         <EditRequestModal
           variant={openModal.type}
           requestId={openModal.requestId}
