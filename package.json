@@ -3,7 +3,7 @@
   "insights": {
     "appname": "access-requests"
   },
-  "version": "1.2.4",
+  "version": "1.2.5",
   "main": "lib/lib.js",
   "module": "lib/lib.js",
   "scripts": {
