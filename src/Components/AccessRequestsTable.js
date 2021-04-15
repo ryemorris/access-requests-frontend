@@ -371,7 +371,16 @@ const AccessRequestsTable = ({ isInternal }) => {
           {columns.map((column, columnIndex) => 
             <Th
               key={columnIndex}
-              sort={{ sortBy: { index: activeSortIndex, direction: activeSortDirection }, onSort, columnIndex }}
+              {...!column.includes('name') && {
+                sort: {
+                  sortBy: {
+                    index: activeSortIndex,
+                    direction: activeSortDirection
+                  },
+                  onSort,
+                  columnIndex
+                }}
+              }
               width={getColumnWidth(columnIndex)}
             >
               {column}
