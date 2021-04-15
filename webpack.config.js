@@ -120,7 +120,10 @@ module.exports = (_env, argv) => {
         shared: {
           ...dependencies,
           ...singletonDeps.reduce((acc, dep) => {
-            acc[dep] = { singleton: true, requiredVersion: dependencies[dep] };
+            const requiredVersion = dependencies[dep];
+            if (requiredVersion) {
+              acc[dep] = { singleton: true, requiredVersion };
+            }
             return acc;
           }, {}),
         },
