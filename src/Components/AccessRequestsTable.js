@@ -16,7 +16,6 @@ import {
   ChipGroup,
   Chip,
   Bullseye,
-  Spinner,
   EmptyState,
   EmptyStateIcon,
   EmptyStateBody,
@@ -193,26 +192,23 @@ const AccessRequestsTable = ({ isInternal }) => {
       Create request
     </Button>
   );
-  if (rows.length === 0) {
+  if (rows.length === 0 && !isLoading) {
     return (
       <Bullseye style={{ height: 'auto' }} className="pf-u-mt-lg">
-        {isLoading
-          ? <Spinner size="xl" />
-          : <EmptyState variant="large">
-              <EmptyStateIcon icon={PlusCircleIcon} />
-              <Title headingLevel="h3" size="lg">
-                {isInternal
-                  ? 'No access requests'
-                  : 'You have no access requests'}
-              </Title>
-              <EmptyStateBody>
-                {isInternal
-                  ? 'Click the button below to create an access request.'
-                  : 'You have no pending Red Hat access requests.'}
-              </EmptyStateBody>
-              {createButton}
-            </EmptyState>
-        }
+        <EmptyState variant="large">
+          <EmptyStateIcon icon={PlusCircleIcon} />
+          <Title headingLevel="h3" size="lg">
+            {isInternal
+              ? 'No access requests'
+              : 'You have no access requests'}
+          </Title>
+          <EmptyStateBody>
+            {isInternal
+              ? 'Click the button below to create an access request.'
+              : 'You have no pending Red Hat access requests.'}
+          </EmptyStateBody>
+          {createButton}
+        </EmptyState>
         {modals}
       </Bullseye>
     );
@@ -386,12 +382,15 @@ const AccessRequestsTable = ({ isInternal }) => {
       </Thead>
       <Tbody>
         {isLoading
-          ?
-            <Tr colSpan={6}>
-              <Bullseye>
-                <Spinner size="xl" />
-              </Bullseye>
-            </Tr>
+          ? [...Array(rows.length || perPage).keys()].map(i =>
+              <Tr key={i}>
+                {columns.map((name, j) =>
+                  <Td key={j} dataLabel={name}>
+                    <div style={{ height: '30px' }} class="ins-c-skeleton ins-c-skeleton__md">{' '}</div>
+                  </Td>
+                )}
+              </Tr>
+            )
           : rows.map((row, rowIndex) =>
             <Tr key={rowIndex}>
               <Td dataLabel={columns[0]}>

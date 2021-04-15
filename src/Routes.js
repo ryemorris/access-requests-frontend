@@ -21,7 +21,7 @@ export const Routes = () => {
         id="toggle-view"
         label="Internal view"
         labelOff="External view"
-        value={isInternal}
+        isChecked={isInternal}
         onChange={() => setIsInternal(!isInternal)} />
     }
       <Switch>

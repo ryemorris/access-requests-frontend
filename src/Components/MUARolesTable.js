@@ -16,7 +16,6 @@ import {
   ChipGroup,
   Chip,
   DropdownToggleCheckbox,
-  Spinner,
   Tooltip
 } from '@patternfly/react-core';
 import { TableComposable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
@@ -133,7 +132,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
   const [isBulkSelectOpen, setIsBulkSelectOpen] = React.useState(false);
   const anySelected = selectedRoles.length > 0;
   const someChecked = anySelected ? null : false;
-  const isChecked = selectedRoles.length === filteredRows.length ? true : someChecked;
+  const isChecked = (selectedRoles.length === filteredRows.length && selectedRoles.length > 0) ? true : someChecked;
   const onSelect = (_ev, isSelected, rowId) => {
     const changed = pagedRows[rowId].display_name;
     if (isSelected) {
@@ -172,6 +171,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
                   />
                 ]}
                 onToggle={isOpen => setIsBulkSelectOpen(isOpen)}
+                isDisabled={rows.length === 0}
               >
                 {selectedRoles.length !== 0 && <React.Fragment>{selectedRoles.length} selected</React.Fragment>}
               </DropdownToggle>
@@ -332,6 +332,20 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
           </Th>
         </Tr>
       </Thead>
+      {rows.length === 0 && [...Array(perPage).keys()].map(i =>
+        <Tbody key={i}>
+          <Tr>
+            {!isReadOnly && <Td />}
+            {columns.map(col =>
+              <Td dataLabel={col}>
+                <div style={{ height: '22px' }} class="ins-c-skeleton ins-c-skeleton__md">
+                  {' '}
+                </div>
+              </Td>
+            )}
+          </Tr>
+        </Tbody>
+      )}
       {pagedRows.map((row, rowIndex) => (
         <Tbody key={rowIndex}>
           <Tr>
@@ -385,7 +399,17 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
                           </Td>
                         </Tr>
                     )
-                    : <Spinner size="lg" />
+                    : [...Array(row.permissions).keys()].map(i =>
+                      <Tr key={i}>
+                        {expandedColumns.map(val => 
+                          <Td key={val} dataLabel={val}>
+                            <div style={{ height: '22px' }} class="ins-c-skeleton ins-c-skeleton__sm">
+                              {' '}
+                            </div>
+                          </Td>
+                        )}
+                      </Tr>
+                    )
                   }
                 </Tbody>
               </TableComposable>
@@ -404,14 +428,9 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
           <p>Select the roles you would like access to.</p>
         </React.Fragment>
       }
-      {rows.length > 0
-        ? <React.Fragment>
-            {roleToolbar}
-            {roleTable}
-            {isReadOnly && <AccessRequestsPagination id="bottom" />}
-          </React.Fragment>
-        : <Spinner size="lg" />
-      }
+      {roleToolbar}
+      {roleTable}
+      {isReadOnly && <AccessRequestsPagination id="bottom" />}
     </React.Fragment>
   );
 };
