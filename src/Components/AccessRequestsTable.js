@@ -75,14 +75,11 @@ const AccessRequestsTable = ({ isInternal }) => {
 
   // Filtering
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
-  const [filterColumn, setFilterColumn] = React.useState(isInternal ? columns[0] : columns[1]);
+  const [filterColumn, setFilterColumn] = React.useState(columns[0]);
   const [isSelectOpen, setIsSelectOpen] = React.useState(false);
   const [statusSelections, setStatusSelections] = React.useState([]);
   const [idFilter, setIdFilter] = React.useState('');
   const [accountFilter, setAccountFilter] = React.useState('');
-  // For external view only
-  const [firstNameFilter, setFirstNameFilter] = React.useState('');
-  const [lastNameFilter, setLastNameFilter] = React.useState('');
 
   // Row loading
   const [isLoading, setIsLoading] = React.useState(true);
@@ -97,13 +94,6 @@ const AccessRequestsTable = ({ isInternal }) => {
     }
     listUrl.searchParams.append('offset', (page - 1) * perPage);
     listUrl.searchParams.append('limit', perPage);
-    // Currently unsupported :(
-    if (firstNameFilter) {
-      listUrl.searchParams.append('first_name', firstNameFilter);
-    }
-    if (lastNameFilter) {
-      listUrl.searchParams.append('last_name', lastNameFilter);
-    }
     if (idFilter) {
       listUrl.searchParams.append('id', idFilter);
     }
@@ -151,8 +141,6 @@ const AccessRequestsTable = ({ isInternal }) => {
       });
   };
   React.useEffect(() => { fetchAccessRequests() }, [
-    firstNameFilter,
-    lastNameFilter,
     idFilter,
     accountFilter,
     statusSelections,
@@ -230,7 +218,7 @@ const AccessRequestsTable = ({ isInternal }) => {
           name={`${colName}-filter`}
           id={`${colName}-filter`}
           type="search"
-          placeholder={`Filter by ${colName.toLowerCase()}`}
+          placeholder={`Filter by ${uncapitalize(colName)}`}
           aria-label={`${colName} search input`}
           value={inputValue}
           onChange={val => setInputValue(val)}
@@ -255,7 +243,7 @@ const AccessRequestsTable = ({ isInternal }) => {
                 </DropdownToggle>
               }
               // https://marvelapp.com/prototype/257je526/screen/74764732
-              dropdownItems={(isInternal ? [0, 1, 5] : [1, 2, 6]).map(i => columns[i]).map(colName =>
+              dropdownItems={(isInternal ? [0, 1, 5] : [0, 6]).map(i => columns[i]).map(colName =>
                 // Filterable columns are RequestID, AccountID, and Status
                 <DropdownItem key={colName} value={colName} component="button">
                   {capitalize(colName)}
@@ -289,12 +277,6 @@ const AccessRequestsTable = ({ isInternal }) => {
                 </Select>
               </React.Fragment>
             }
-            {filterColumn === 'First name' &&
-              <FilterTextForm colName={filterColumn} value={firstNameFilter} setValue={setFirstNameFilter} />
-            }
-            {filterColumn === 'Last name' &&
-              <FilterTextForm colName={filterColumn} value={lastNameFilter} setValue={setLastNameFilter} />
-            }
             {filterColumn === 'Request ID' &&
               <FilterTextForm colName={filterColumn} value={idFilter} setValue={setIdFilter} />
             }
@@ -318,20 +300,6 @@ const AccessRequestsTable = ({ isInternal }) => {
             </Chip>
           )}
         </ChipGroup>
-        {firstNameFilter && 
-          <ChipGroup categoryName="First name">
-            <Chip onClick={() => setFirstNameFilter('')}>
-              {firstNameFilter}
-            </Chip>
-          </ChipGroup>
-        }
-        {lastNameFilter && 
-          <ChipGroup categoryName="Last name">
-            <Chip onClick={() => setLastNameFilter('')}>
-              {lastNameFilter}
-            </Chip>
-          </ChipGroup>
-        }
         {idFilter && 
           <ChipGroup categoryName="Request ID">
             <Chip onClick={() => setIdFilter('')}>
