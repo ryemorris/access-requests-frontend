@@ -16,7 +16,10 @@ import {
   ChipGroup,
   Chip,
   DropdownToggleCheckbox,
-  Tooltip
+  Tooltip,
+  EmptyState,
+  EmptyStateIcon,
+  EmptyStateBody
 } from '@patternfly/react-core';
 import { TableComposable, Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
@@ -67,23 +70,22 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
     }
   }, []);
 
-  // Filtering
+  // Sorting
   const [activeSortIndex, setActiveSortIndex] = React.useState('name');
   const [activeSortDirection, setActiveSortDirection] = React.useState('asc');
   const onSort = (_ev, index, direction) => {
     setActiveSortIndex(index);
     setActiveSortDirection(direction);
-    // sorts the rows
-    const updatedRows = rows;
-    setRows(updatedRows);
   };
 
+  // Filtering
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const [filterColumn, setFilterColumn] = React.useState(columns[0]);
   const [isSelectOpen, setIsSelectOpen] = React.useState(false);
   const [appSelections, setAppSelections] = React.useState([]);
   const [nameFilterInput, setNameFilterInput] = React.useState('');
   const [nameFilter, setNameFilter] = React.useState('');
+  const hasFilters = appSelections.length > 0 || nameFilter;
   const selectLabelId = 'filter-application';
   const selectPlaceholder = 'Filter by application';
 
@@ -152,6 +154,14 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
     }
   };
 
+  const clearFiltersButton = (
+    <Button
+      variant="link"
+      onClick={() => { setAppSelections([]); setNameFilter(''); }}
+    >
+      Clear filters
+    </Button>
+  );
   const roleToolbar = isReadOnly ? null : (
     <Toolbar id="access-requests-roles-table-toolbar">
       <ToolbarContent>
@@ -261,7 +271,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
           <AccessRequestsPagination id="top" />
         </ToolbarItem>
       </ToolbarContent>
-      {(appSelections.length > 0 || nameFilter) &&
+      {hasFilters &&
         <ToolbarContent>
           {nameFilter &&
             <ChipGroup categoryName="Role name">
@@ -279,9 +289,7 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
               )}
             </ChipGroup>
           }
-          <Button variant="link" onClick={() => { setAppSelections([]); setNameFilter(''); }}>
-            Clear filters
-          </Button>
+          {clearFiltersButton}
         </ToolbarContent>
       }
     </Toolbar>
@@ -417,6 +425,23 @@ const MUARolesTable = ({ roles: selectedRoles, setRoles: setSelectedRoles }) => 
           </Tr>
         </Tbody>
       ))}
+      {pagedRows.length === 0 && hasFilters &&
+        <Tr>
+          <Td colSpan={columns.length}>
+            <EmptyState variant="small">
+              <EmptyStateIcon icon={SearchIcon} />
+              <Title headingLevel="h2" size="lg">
+                No matching requests found
+              </Title>
+              <EmptyStateBody>
+                No results match the filter criteria.
+                Remove all filters or clear all filters to show results.
+              </EmptyStateBody>
+              {clearFiltersButton}
+            </EmptyState>
+          </Td>
+        </Tr>
+      }
     </TableComposable>
   );
 

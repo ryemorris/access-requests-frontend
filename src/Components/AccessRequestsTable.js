@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Label,
   Toolbar,
   ToolbarItem,
   ToolbarContent,
@@ -51,7 +50,7 @@ const AccessRequestsTable = ({ isInternal }) => {
     : ['Request ID', 'First name', 'Last name', 'Start date', 'End date', 'Created', 'Decision'];
 
   // Sorting
-  const [activeSortIndex, setActiveSortIndex] = React.useState(4);
+  const [activeSortIndex, setActiveSortIndex] = React.useState(isInternal ? 4 : 5);
   const [activeSortDirection, setActiveSortDirection] = React.useState('desc');
   const onSort = (_ev, index, direction) => {
     setActiveSortIndex(index);
@@ -75,11 +74,11 @@ const AccessRequestsTable = ({ isInternal }) => {
 
   // Filtering
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
-  const [filterColumn, setFilterColumn] = React.useState(columns[0]);
+  const [filterColumn, setFilterColumn] = React.useState(columns[isInternal ? 1 : 6]);
   const [isSelectOpen, setIsSelectOpen] = React.useState(false);
   const [statusSelections, setStatusSelections] = React.useState([]);
-  const [idFilter, setIdFilter] = React.useState('');
   const [accountFilter, setAccountFilter] = React.useState('');
+  const hasFilters = statusSelections.length > 0 || accountFilter;
 
   // Row loading
   const [isLoading, setIsLoading] = React.useState(true);
@@ -94,18 +93,15 @@ const AccessRequestsTable = ({ isInternal }) => {
     }
     listUrl.searchParams.append('offset', (page - 1) * perPage);
     listUrl.searchParams.append('limit', perPage);
-    if (idFilter) {
-      listUrl.searchParams.append('id', idFilter);
-    }
+    // https://github.com/RedHatInsights/insights-rbac/blob/master/rbac/api/cross_access/view.py
     if (accountFilter) {
-      listUrl.searchParams.append('account_number', accountFilter);
+      listUrl.searchParams.append('account', accountFilter);
     }
     if (statusSelections.length > 0) {
       listUrl.searchParams.append('status', statusSelections.join(','));
     }
-    // Currently unsupported :(
-    listUrl.searchParams.append('sort_by', columns[activeSortIndex].toLowerCase());
-    listUrl.searchParams.append('sort_direction', activeSortDirection);
+    const orderBy = `${activeSortDirection === 'desc' ? '-' : ''}${columns[activeSortIndex].toLowerCase().replace(' ', '_')}`;
+    listUrl.searchParams.append('order_by', orderBy);
 
     fetch(listUrl.href)
       .then(res => res.json())
@@ -141,7 +137,6 @@ const AccessRequestsTable = ({ isInternal }) => {
       });
   };
   React.useEffect(() => { fetchAccessRequests() }, [
-    idFilter,
     accountFilter,
     statusSelections,
     activeSortIndex,
@@ -180,7 +175,7 @@ const AccessRequestsTable = ({ isInternal }) => {
       Create request
     </Button>
   );
-  if (rows.length === 0 && !isLoading) {
+  if (rows.length === 0 && !isLoading && !hasFilters) {
     return (
       <Bullseye style={{ height: 'auto' }} className="pf-u-mt-lg">
         <EmptyState variant="large">
@@ -229,6 +224,14 @@ const AccessRequestsTable = ({ isInternal }) => {
       </form>
     );
   }
+  const clearFiltersButton = (
+    <Button
+      variant="link"
+      onClick={() => { setStatusSelections([]); setAccountFilter(''); }}
+    >
+      Clear filters
+    </Button>
+  );
   const toolbar = (
     <Toolbar id="access-requests-table-toolbar">
       <ToolbarContent>
@@ -243,7 +246,7 @@ const AccessRequestsTable = ({ isInternal }) => {
                 </DropdownToggle>
               }
               // https://marvelapp.com/prototype/257je526/screen/74764732
-              dropdownItems={(isInternal ? [0, 1, 5] : [0, 6]).map(i => columns[i]).map(colName =>
+              dropdownItems={(isInternal ? [1, 5] : [6]).map(i => columns[i]).map(colName =>
                 // Filterable columns are RequestID, AccountID, and Status
                 <DropdownItem key={colName} value={colName} component="button">
                   {capitalize(colName)}
@@ -277,9 +280,6 @@ const AccessRequestsTable = ({ isInternal }) => {
                 </Select>
               </React.Fragment>
             }
-            {filterColumn === 'Request ID' &&
-              <FilterTextForm colName={filterColumn} value={idFilter} setValue={setIdFilter} />
-            }
             {filterColumn === 'Account number' &&
               <FilterTextForm colName={filterColumn} value={accountFilter} setValue={setAccountFilter} />
             }
@@ -300,13 +300,6 @@ const AccessRequestsTable = ({ isInternal }) => {
             </Chip>
           )}
         </ChipGroup>
-        {idFilter && 
-          <ChipGroup categoryName="Request ID">
-            <Chip onClick={() => setIdFilter('')}>
-              {idFilter}
-            </Chip>
-          </ChipGroup>
-        }
         {accountFilter &&
           <ChipGroup categoryName="Account number">
             <Chip onClick={() => setAccountFilter('')}>
@@ -314,13 +307,7 @@ const AccessRequestsTable = ({ isInternal }) => {
             </Chip>
           </ChipGroup>
         }
-        {(statusSelections.length > 0 || idFilter || accountFilter) &&
-          <Button
-            variant="link"
-            onClick={() => { setStatusSelections([]); setIdFilter(''); setAccountFilter(''); }}
-          >
-            Clear filters
-          </Button>}
+        {hasFilters && clearFiltersButton}
       </ToolbarContent>
     </Toolbar>
   );
@@ -410,6 +397,23 @@ const AccessRequestsTable = ({ isInternal }) => {
               }
             </Tr>
           )}
+        {rows.length === 0 && hasFilters &&
+          <Tr>
+            <Td colSpan={columns.length}>
+              <EmptyState variant="small">
+                <EmptyStateIcon icon={SearchIcon} />
+                <Title headingLevel="h2" size="lg">
+                  No matching requests found
+                </Title>
+                <EmptyStateBody>
+                  No results match the filter criteria.
+                  Remove all filters or clear all filters to show results.
+                </EmptyStateBody>
+                {clearFiltersButton}
+              </EmptyState>
+            </Td>
+          </Tr>
+        }
       </Tbody>
     </TableComposable>
   );
