@@ -10,16 +10,15 @@ const App = (props) => {
     insights.chrome.init();
 
     insights.chrome.identifyApp('access-requests');
-    return insights.chrome.on(
-      'APP_NAVIGATION',
-      event => this.props.history.push(`/${event.navId}`)
+    return insights.chrome.on('APP_NAVIGATION', (event) =>
+      this.props.history.push(`/${event.navId}`)
     );
   }, []);
 
   return (
     <Fragment>
       <NotificationPortal />
-      <Routes childProps={ props } />
+      <Routes childProps={props} />
     </Fragment>
   );
 };
