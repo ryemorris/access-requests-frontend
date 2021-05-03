@@ -17,7 +17,9 @@
     "start:beta": "NODE_ENV=development BETA=true webpack serve --config config/dev.webpack.config.js",
     "travis:build": "NODE_ENV=production webpack --config config/prod.webpack.config.js",
     "travis:verify": "npm-run-all travis:build lint test",
+    "build:prod": "NODE_ENV=production webpack --config config/prod.webpack.config.js",
     "verify": "npm-run-all build lint test",
+    "deploy": "npm-run-all build:prod",
     "nightly": "npm run travis:verify"
   },
   "dependencies": {
