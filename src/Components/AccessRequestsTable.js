@@ -1,4 +1,3 @@
-/*global API_BASE*/
 import React from 'react';
 import {
   Toolbar,

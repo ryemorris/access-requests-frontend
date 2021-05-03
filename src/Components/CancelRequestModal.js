@@ -1,4 +1,3 @@
-/*global API_BASE*/
 import React from 'react';
 import { Modal, Button, Spinner } from '@patternfly/react-core';
 import { useDispatch } from 'react-redux';

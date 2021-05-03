@@ -33,37 +33,7 @@
     "react-router-dom": "^5.2.0",
     "redux": "^4.0.0"
   },
-  "jest": {
-    "coverageDirectory": "./coverage/",
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "src/**/*.js",
-      "!src/entry.js",
-      "!src/entry-dev.js"
-    ],
-    "transformIgnorePatterns": [
-      "<rootDir>/node_modules/(?!(@patternfly/react-core/|@patternfly/react-icons/|@redhat-cloud-services|@patternfly/react-table|@patternfly/react-tokens)).*$"
-    ],
-    "setupFiles": [
-      "<rootDir>/config/setupTests.js"
-    ],
-    "roots": [
-      "<rootDir>/src/"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "jsx"
-    ],
-    "moduleNameMapper": {
-      "\\.(css|scss)$": "identity-obj-proxy",
-      "customReact": "react",
-      "PFReactCore": "@patternfly/react-core",
-      "PFReactTable": "@patternfly/react-table",
-      "reactRedux": "react-redux"
-    }
-  },
   "devDependencies": {
-    "@babel/cli": "^7.10.0",
     "@babel/core": "^7.10.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.10.0",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",

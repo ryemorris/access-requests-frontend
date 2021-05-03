@@ -3,3 +3,4 @@ extends:
 globals:
   insights: true
   shallow: true
+  API_BASE: true
