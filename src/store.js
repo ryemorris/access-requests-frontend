@@ -1,7 +1,11 @@
-// I don't fully understand this. It's just for notifications.
+import { createContext } from 'react';
 import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 import notificationsMiddleware from '@redhat-cloud-services/frontend-components-notifications/notificationsMiddleware';
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
+
+export const RegistryContext = createContext({
+  getRegistry: () => {},
+});
 
 const registry = new ReducerRegistry({}, [
   notificationsMiddleware({
@@ -14,4 +18,4 @@ registry.register({
   notifications: notificationsReducer,
 });
 
-export default registry.getStore();
+export default registry;

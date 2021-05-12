@@ -15,30 +15,34 @@ import {
   Button,
   Modal,
   Wizard,
-  WizardContextConsumer
+  WizardContextConsumer,
 } from '@patternfly/react-core';
 import HelpIcon from '@patternfly/react-icons/dist/js/icons/help-icon';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
 import { isValidDate } from '@patternfly/react-core/dist/esm/components/CalendarMonth';
-import { useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import MUARolesTable from './MUARolesTable';
+import PropTypes from 'prop-types';
 
-const nameHelperText = 'Customers will be able to see this information as part of your request';
+const nameHelperText =
+  'Customers will be able to see this information as part of your request';
 const helperTexts = {
   'first name': nameHelperText,
   'last name': nameHelperText,
-  'account number': 'This is the account number that you would like to receive read access to',
-  'access duration': 'This is the time frame you would like to be granted read access to accounts'
+  'account number':
+    'This is the account number that you would like to receive read access to',
+  'access duration':
+    'This is the time frame you would like to be granted read access to accounts',
 };
 const invalidAccountTitle = 'Invalid Account number';
-const getLabelIcon = field => (
+const getLabelIcon = (field) => (
   <Popover bodyContent={<p>{helperTexts[field]}</p>}>
     <button
       type="button"
       aria-label={`More info for ${field}`}
-      onClick={e => e.preventDefault()}
+      onClick={(e) => e.preventDefault()}
       aria-describedby="form-name"
       className="pf-c-form__group-label-help"
     >
@@ -51,8 +55,13 @@ const today = new Date();
 today.setDate(today.getDate() - 1);
 const maxStartDate = new Date();
 maxStartDate.setDate(maxStartDate.getDate() + 60);
-const dateFormat = date => date.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
-const dateParse = date => {
+const dateFormat = (date) =>
+  date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+const dateParse = (date) => {
   const split = date.split('/');
   if (split.length !== 3) {
     return new Date();
@@ -72,13 +81,15 @@ const RequestDetailsForm = ({
   setEnd,
   disableAccount,
   isLoading,
-  error
+  error,
 }) => {
   let [startDate, setStartDate] = React.useState();
-  const [validatedAccount, setValidatedAccount] = React.useState(error ? 'error' : 'default');
+  const [validatedAccount, setValidatedAccount] = React.useState(
+    error ? 'error' : 'default'
+  );
 
   // https://github.com/RedHatInsights/insights-rbac/blob/master/rbac/api/cross_access/model.py#L49
-  const startValidator = date => {
+  const startValidator = (date) => {
     if (isValidDate(date)) {
       if (date < today) {
         setEnd('');
@@ -93,7 +104,7 @@ const RequestDetailsForm = ({
     return '';
   };
 
-  const endValidator = date => {
+  const endValidator = (date) => {
     if (isValidDate(startDate)) {
       if (startDate > date) {
         return 'End date must be after from date';
@@ -115,8 +126,7 @@ const RequestDetailsForm = ({
     if (isValidDate(date) && !startValidator(date)) {
       date.setDate(date.getDate() + 7);
       setEnd(dateFormat(date));
-    }
-    else {
+    } else {
       setEnd('');
     }
   };
@@ -124,14 +134,13 @@ const RequestDetailsForm = ({
   const onEndChange = (str, date) => {
     if (endValidator(date)) {
       setEnd('');
-    }
-    else {
+    } else {
       setEnd(str);
     }
   };
 
   return (
-    <Form onSubmit={ev => ev.preventDefault()} isDisabled={isLoading}>
+    <Form onSubmit={(ev) => ev.preventDefault()} isDisabled={isLoading}>
       <Title headingLevel="h2">Request details</Title>
       <Split hasGutter>
         <SplitItem isFilled>
@@ -156,14 +165,21 @@ const RequestDetailsForm = ({
         <TextInput
           id="account-number"
           value={targetAccount}
-          onChange={val => { setTargetAccount(val); setValidatedAccount('default'); }}
+          onChange={(val) => {
+            setTargetAccount(val);
+            setValidatedAccount('default');
+          }}
           isRequired
           placeholder="Example, 8675309"
           validated={validatedAccount}
           isDisabled={disableAccount}
         />
       </FormGroup>
-      <FormGroup label="Access duration" isRequired labelIcon={getLabelIcon('access duration')}>
+      <FormGroup
+        label="Access duration"
+        isRequired
+        labelIcon={getLabelIcon('access duration')}
+      >
         <Split>
           <SplitItem>
             <DatePicker
@@ -177,9 +193,7 @@ const RequestDetailsForm = ({
               validators={[startValidator]}
             />
           </SplitItem>
-          <SplitItem style={{ padding: '6px 12px 0 12px' }}>
-            to
-          </SplitItem>
+          <SplitItem style={{ padding: '6px 12px 0 12px' }}>to</SplitItem>
           <SplitItem>
             <DatePicker
               width="300px"
@@ -199,10 +213,31 @@ const RequestDetailsForm = ({
   );
 };
 
+RequestDetailsForm.propTypes = {
+  user: PropTypes.any,
+  targetAccount: PropTypes.any,
+  setTargetAccount: PropTypes.any,
+  start: PropTypes.any,
+  setStart: PropTypes.any,
+  end: PropTypes.any,
+  setEnd: PropTypes.any,
+  disableAccount: PropTypes.any,
+  isLoading: PropTypes.any,
+  error: PropTypes.any,
+};
+
 // Can't use CSS with @redhat-cloud-services/frontend-components-config because it's scoped to <main> content
 // rather than Modal content...
 const spaceUnderStyle = { paddingBottom: '16px' };
-const ReviewStep = ({ targetAccount, start, end, roles, isLoading, error, setError, onClose }) => {
+const ReviewStep = ({
+  targetAccount,
+  start,
+  end,
+  roles,
+  isLoading,
+  error,
+  onClose,
+}) => {
   let content = null;
   if (isLoading) {
     content = (
@@ -216,8 +251,7 @@ const ReviewStep = ({ targetAccount, start, end, roles, isLoading, error, setErr
         </Button>
       </EmptyState>
     );
-  }
-  else if (error) {
+  } else if (error) {
     const context = React.useContext(WizardContextConsumer);
     content = (
       <EmptyState>
@@ -225,28 +259,31 @@ const ReviewStep = ({ targetAccount, start, end, roles, isLoading, error, setErr
         <Title headingLevel="h2" size="lg">
           {error.title}
         </Title>
-        <EmptyStateBody>
-          {error.description}
-        </EmptyStateBody>
-        {error.title === invalidAccountTitle &&
+        <EmptyStateBody>{error.description}</EmptyStateBody>
+        {error.title === invalidAccountTitle && (
           <Button variant="primary" onClick={() => context.goToStepById(1)}>
             Return to Step 1
           </Button>
-        }
+        )}
       </EmptyState>
     );
-  }
-  else {
+  } else {
     content = (
       <React.Fragment>
-        <Title headingLevel="h2" style={spaceUnderStyle}>Review details</Title>
+        <Title headingLevel="h2" style={spaceUnderStyle}>
+          Review details
+        </Title>
         <table>
           <tr>
-            <td style={spaceUnderStyle}><b>Account number</b></td>
+            <td style={spaceUnderStyle}>
+              <b>Account number</b>
+            </td>
             <td style={spaceUnderStyle}>{targetAccount}</td>
           </tr>
           <tr>
-            <td style={{ paddingRight: '32px' }}><b>Access duration</b></td>
+            <td style={{ paddingRight: '32px' }}>
+              <b>Access duration</b>
+            </td>
             <td></td>
           </tr>
           <tr>
@@ -258,26 +295,34 @@ const ReviewStep = ({ targetAccount, start, end, roles, isLoading, error, setErr
             <td style={spaceUnderStyle}>{end}</td>
           </tr>
           <tr>
-            <td><b>Roles</b></td>
+            <td>
+              <b>Roles</b>
+            </td>
             <td>{roles[0]}</td>
           </tr>
-          {roles.slice(1).map(role =>
+          {roles.slice(1).map((role) => (
             <tr key={role}>
               <td></td>
               <td>{role}</td>
             </tr>
-          )}
+          ))}
         </table>
       </React.Fragment>
     );
   }
 
-  return (
-    <React.Fragment>
-      {content}
-    </React.Fragment>
-  );
-}
+  return <React.Fragment>{content}</React.Fragment>;
+};
+
+ReviewStep.propTypes = {
+  targetAccount: PropTypes.any,
+  start: PropTypes.any,
+  end: PropTypes.any,
+  roles: PropTypes.any,
+  isLoading: PropTypes.any,
+  error: PropTypes.any,
+  onClose: PropTypes.any,
+};
 
 const EditRequestModal = ({ requestId, variant, onClose }) => {
   const isEdit = variant === 'edit';
@@ -295,42 +340,41 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
   React.useEffect(() => {
     const userPromise = window.insights.chrome.auth.getUser();
     const detailsPromise = isEdit
-      ? fetch(`${API_BASE}/cross-account-requests/${requestId}/`).then(res => res.json())
-      : new Promise(res => res(true));
+      ? fetch(`${API_BASE}/cross-account-requests/${requestId}/`).then((res) =>
+          res.json()
+        )
+      : new Promise((res) => res(true));
 
-    Promise.all([
-      userPromise,
-      detailsPromise
-    ])
+    Promise.all([userPromise, detailsPromise])
       .then(([user, details]) => {
         if (user && user.identity && user.identity.user) {
           setUser(user.identity.user);
-        }
-        else {
+        } else {
           throw Error("Couldn't get current user. Make sure you're logged in");
         }
         if (isEdit) {
           if (details.errors) {
-            throw Error(details.errors.map(e => e.detail).join('\n'));
+            throw Error(details.errors.map((e) => e.detail).join('\n'));
           }
           if (details && details.target_account) {
             setTargetAccount(details.target_account);
             setStart(details.start_date);
             setEnd(details.end_date);
-            setRoles(details.roles.map(role => role.display_name));
-          }
-          else {
+            setRoles(details.roles.map((role) => role.display_name));
+          } else {
             throw Error(`Could not fetch details for request ${requestId}`);
           }
         }
         setIsLoading(false);
       })
-      .catch(err => {
-        dispatch(addNotification({
-          variant: 'danger',
-          title: 'Could not load access request',
-          description: err.message,
-        }));
+      .catch((err) => {
+        dispatch(
+          addNotification({
+            variant: 'danger',
+            title: 'Could not load access request',
+            description: err.message,
+          })
+        );
       });
   }, []);
 
@@ -343,32 +387,39 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
       end_date: end,
       roles,
     };
-    fetch(`${API_BASE}/cross-account-requests/${isEdit ? `/${requestId}/` : ''}`, {
-      method: isEdit ? 'PUT' : 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    })
-      .then(res => res.json())
-      .then(res => {
+    fetch(
+      `${API_BASE}/cross-account-requests/${isEdit ? `/${requestId}/` : ''}`,
+      {
+        method: isEdit ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      }
+    )
+      .then((res) => res.json())
+      .then((res) => {
         if (res.errors && res.errors.length > 0) {
           throw Error(res.errors[0].detail);
         }
-        dispatch(addNotification({
-          variant: 'success',
-          title: `${isEdit ? 'Edited' : 'Created'} access request`,
-          description: res.request_id,
-        }));
+        dispatch(
+          addNotification({
+            variant: 'success',
+            title: `${isEdit ? 'Edited' : 'Created'} access request`,
+            description: res.request_id,
+          })
+        );
         onClose(true);
       })
-      .catch(err => {
+      .catch((err) => {
         const isInvalidAccount = /Account .* does not exist/.test(err.message);
         setError({
-          title: isInvalidAccount ? invalidAccountTitle : `Could not ${variant} access request`,
+          title: isInvalidAccount
+            ? invalidAccountTitle
+            : `Could not ${variant} access request`,
           description: isInvalidAccount
-           ? 'Please return to Step 1: Request details and input a new account number for your request.'
-           : err.message
+            ? 'Please return to Step 1: Request details and input a new account number for your request.'
+            : err.message,
         });
         setIsLoading(false);
       });
@@ -380,44 +431,48 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
     {
       id: 1,
       name: 'Request details',
-      component: <RequestDetailsForm
-        user={user}
-        targetAccount={targetAccount}
-        setTargetAccount={setTargetAccount}
-        start={start}
-        setStart={setStart}
-        end={end}
-        setEnd={setEnd}
-        disableAccount={isEdit}
-        isLoading={isLoading}
-        error={error}
-      />,
-      enableNext: step1Complete
+      component: (
+        <RequestDetailsForm
+          user={user}
+          targetAccount={targetAccount}
+          setTargetAccount={setTargetAccount}
+          start={start}
+          setStart={setStart}
+          end={end}
+          setEnd={setEnd}
+          disableAccount={isEdit}
+          isLoading={isLoading}
+          error={error}
+        />
+      ),
+      enableNext: step1Complete,
     },
     {
       id: 2,
       name: 'Select roles',
       component: <MUARolesTable roles={roles} setRoles={setRoles} />,
       enableNext: step2Complete,
-      canJumpTo: step1Complete
+      canJumpTo: step1Complete,
     },
     {
       id: 3,
       name: 'Review details',
-      component: <ReviewStep
-        targetAccount={targetAccount}
-        start={start}
-        end={end}
-        roles={roles}
-        isLoading={isLoading}
-        error={error}
-        setError={setError}
-        onClose={() => onClose(false)}
-      />,
+      component: (
+        <ReviewStep
+          targetAccount={targetAccount}
+          start={start}
+          end={end}
+          roles={roles}
+          isLoading={isLoading}
+          error={error}
+          setError={setError}
+          onClose={() => onClose(false)}
+        />
+      ),
       canJumpTo: step1Complete && step2Complete,
       enableNext: !isLoading,
-      nextButtonText: 'Finish'
-    }
+      nextButtonText: 'Finish',
+    },
   ];
 
   const titleId = `${variant}-request`;
@@ -448,6 +503,10 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
   );
 };
 
-EditRequestModal.displayName = 'EditRequestModal';
+EditRequestModal.propTypes = {
+  requestId: PropTypes.string,
+  variant: PropTypes.any,
+  onClose: PropTypes.func,
+};
 
 export default EditRequestModal;

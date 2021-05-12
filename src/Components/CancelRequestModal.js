@@ -1,7 +1,8 @@
 import React from 'react';
 import { Modal, Button, Spinner } from '@patternfly/react-core';
-import { useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
+import PropTypes from 'prop-types';
 
 const CancelRequestModal = ({ requestId, onClose }) => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -12,28 +13,32 @@ const CancelRequestModal = ({ requestId, onClose }) => {
     fetch(`${API_BASE}/cross-account-requests/${requestId}/`, {
       method: 'PATCH',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ status: 'cancelled' })
+      body: JSON.stringify({ status: 'cancelled' }),
     })
-      .then(res => res.json())
-      .then(res => {
+      .then((res) => res.json())
+      .then((res) => {
         if (res.errors && res.errors.length > 0) {
-          throw Error(res.errors.map(e => e.detail).join('\n'));
+          throw Error(res.errors.map((e) => e.detail).join('\n'));
         }
-        dispatch(addNotification({
-          variant: 'success',
-          title: 'Request cancelled successfully',
-        }));
+        dispatch(
+          addNotification({
+            variant: 'success',
+            title: 'Request cancelled successfully',
+          })
+        );
         setIsLoading(false);
         onClose(true);
       })
-      .catch(err => {
-        dispatch(addNotification({
-          variant: 'danger',
-          title: 'There was an error cancelling your request',
-          description: err.message,
-        }));
+      .catch((err) => {
+        dispatch(
+          addNotification({
+            variant: 'danger',
+            title: 'There was an error cancelling your request',
+            description: err.message,
+          })
+        );
         setIsLoading(false);
         onClose(true);
       });
@@ -45,8 +50,12 @@ const CancelRequestModal = ({ requestId, onClose }) => {
       variant="small"
       onClose={() => onClose(false)}
       actions={[
-        <Button key="confirm" variant="danger" onClick={onCancel}>Yes, cancel</Button>,
-        <Button key="cancel" variant="link" onClick={() => onClose(false)}>No, keep</Button>
+        <Button key="confirm" variant="danger" onClick={onCancel}>
+          Yes, cancel
+        </Button>,
+        <Button key="cancel" variant="link" onClick={() => onClose(false)}>
+          No, keep
+        </Button>,
       ]}
     >
       Request <b>{requestId}</b> will be withdrawn.
@@ -55,6 +64,9 @@ const CancelRequestModal = ({ requestId, onClose }) => {
   );
 };
 
-CancelRequestModal.displayName = 'CancelRequestModal';
+CancelRequestModal.propTypes = {
+  requestId: PropTypes.string,
+  onClose: PropTypes.func,
+};
 
 export default CancelRequestModal;

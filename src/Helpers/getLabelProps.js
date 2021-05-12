@@ -11,24 +11,19 @@ export function getLabelProps(status) {
   if (status === 'pending') {
     color = 'blue';
     icon = <PendingIcon />;
-  }
-  else if (status === 'approved') {
+  } else if (status === 'approved') {
     color = 'green';
     icon = <CheckCircleIcon />;
-  }
-  else if (status === 'denied') {
+  } else if (status === 'denied') {
     color = 'red';
     icon = <ExclamationCircleIcon />;
-  }
-  else if (status === 'cancelled') {
+  } else if (status === 'cancelled') {
     color = 'orange';
     icon = <ErrorCircleOIcon />;
-  }
-  else if (status === 'expired') {
+  } else if (status === 'expired') {
     color = 'grey';
     icon = <ClockIcon />;
   }
 
   return { color, icon };
 }
-
