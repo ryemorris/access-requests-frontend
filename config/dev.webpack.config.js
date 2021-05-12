@@ -1,10 +1,17 @@
 const webpack = require('webpack');
 const { resolve } = require('path');
+const {
+  getProxyPaths,
+  getHtmlReplacements,
+} = require('@redhat-cloud-services/insights-standalone');
 const config = require('@redhat-cloud-services/frontend-components-config');
+
+const webpackPort = 8002;
 const { config: webpackConfig, plugins } = config({
   rootFolder: resolve(__dirname, '../'),
   debug: true,
-  deployment: `${process.env.BETA ? 'beta/' : ''}apps`,
+  replacePlugin: getHtmlReplacements(),
+  port: webpackPort,
 });
 
 plugins.push(
@@ -14,24 +21,15 @@ plugins.push(
       useFileHash: false,
       exposes: {
         './RootApp': resolve(__dirname, '../src/AppEntry'),
-        './AccessRequestsPage': resolve(
-          __dirname,
-          '../src/Routes/AccessRequestsPage'
-        ),
-        './AccessRequestDetailsPage': resolve(
-          __dirname,
-          '../src/Routes/AccessRequestDetailsPage'
-        ),
       },
     }
-  )
-);
-
-plugins.push(
+  ),
   new webpack.DefinePlugin({
     API_BASE: JSON.stringify('/api/rbac/v1'),
   })
 );
+
+webpackConfig.devServer.proxy = getProxyPaths({ webpackPort });
 
 module.exports = {
   ...webpackConfig,
