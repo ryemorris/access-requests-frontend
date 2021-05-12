@@ -23,10 +23,7 @@ plugins.push(
         ),
       },
     }
-  )
-);
-
-plugins.push(
+  ),
   new webpack.DefinePlugin({
     API_BASE: JSON.stringify('/api/rbac/v1'),
   })
