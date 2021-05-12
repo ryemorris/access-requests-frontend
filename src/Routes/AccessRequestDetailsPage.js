@@ -74,9 +74,7 @@ const BaseAccessRequestDetailsPage = ({ isInternal }) => {
         <Breadcrumb>
           <BreadcrumbItem
             render={() => (
-              <Link to="../">
-                {!isInternal && 'Red Hat '}Access Requests
-              </Link>
+              <Link to="../">{!isInternal && 'Red Hat '}Access Requests</Link>
             )}
           />
           <BreadcrumbItem>{requestId}</BreadcrumbItem>
@@ -215,14 +213,17 @@ const BaseAccessRequestDetailsPage = ({ isInternal }) => {
   );
 };
 
-const AccessRequestDetailsPage = ({ getRegistry, ...props }) => (
+// This component is a federated module used in https://github.com/RedHatInsights/insights-rbac-ui
+// Try not to break RBAC.
+const AccessRequestDetailsPage = ({ getRegistry, isInternal }) => (
   <Provider store={getRegistry().getStore()}>
-    <BaseAccessRequestDetailsPage {...props} />
+    <BaseAccessRequestDetailsPage isInternal={isInternal} />
   </Provider>
 );
 
 AccessRequestDetailsPage.propTypes = {
   getRegistry: PropTypes.func,
+  isInternal: PropTypes.bool,
 };
 
 BaseAccessRequestDetailsPage.propTypes = {

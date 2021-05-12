@@ -24,6 +24,8 @@ const AccessRequestsPage = ({ getRegistry, isInternal }) => {
   );
 };
 
+// This component is a federated module used in https://github.com/RedHatInsights/insights-rbac-ui
+// Try not to break RBAC.
 AccessRequestsPage.propTypes = {
   getRegistry: PropTypes.func,
   isInternal: PropTypes.bool,
