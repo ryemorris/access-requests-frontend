@@ -36,6 +36,7 @@ export function StatusLabel({ requestId, status: statusProp, hideActions }) {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
       body: JSON.stringify({ status: newStatus }),
     })

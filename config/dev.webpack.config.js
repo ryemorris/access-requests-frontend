@@ -1,19 +1,22 @@
 const webpack = require('webpack');
 const { resolve } = require('path');
-const {
-  getProxyPaths,
-  getHtmlReplacements,
-} = require('@redhat-cloud-services/insights-standalone');
 const config = require('@redhat-cloud-services/frontend-components-config');
+const {
+  defaultServices,
+  rbac,
+  backofficeProxy,
+} = require('@redhat-cloud-services/frontend-components-config-utilities/standalone');
 
-const webpackPort = 8002;
 const { config: webpackConfig, plugins } = config({
   rootFolder: resolve(__dirname, '../'),
   debug: true,
-  replacePlugin: getHtmlReplacements(),
-  port: webpackPort,
+  deployment: 'beta/apps',
+  standalone: {
+    rbac,
+    backofficeProxy,
+    ...defaultServices,
+  },
 });
-
 plugins.push(
   require('@redhat-cloud-services/frontend-components-config/federated-modules')(
     {
@@ -29,9 +32,7 @@ plugins.push(
   })
 );
 
-webpackConfig.devServer.hot = false;
-webpackConfig.devServer.proxy = getProxyPaths({ webpackPort });
-
+console.log('double check', webpackConfig.devServer.proxy);
 module.exports = {
   ...webpackConfig,
   plugins,

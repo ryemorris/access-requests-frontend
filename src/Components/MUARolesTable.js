@@ -51,7 +51,8 @@ const MUARolesTable = ({
   React.useEffect(() => {
     if (rolesCache.length === 0 || applicationsCache.length === 0) {
       fetch(
-        `${API_BASE}/roles/?limit=9999&order_by=display_name&add_fields=groups_in_count`
+        `${API_BASE}/roles/?limit=9999&order_by=display_name&add_fields=groups_in_count`,
+        { headers: { Accept: 'application/json' } }
       )
         .then((res) => res.json())
         .then(({ data }) => {
@@ -364,7 +365,9 @@ const MUARolesTable = ({
     row.isExpanded = !row.isExpanded;
     setRows([...rows]);
     if (!row.access) {
-      fetch(`${API_BASE}/roles/${row.uuid}/`)
+      fetch(`${API_BASE}/roles/${row.uuid}/`, {
+        headers: { Accept: 'application/json' },
+      })
         .then((res) => res.json())
         .then((res) => {
           row.access = res.access.map((a) => a.permission.split(':'));

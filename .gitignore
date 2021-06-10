@@ -8,6 +8,7 @@
 
 # dependencies
 node_modules
+repos
 
 # production
 dist

@@ -31,7 +31,12 @@ const BaseAccessRequestDetailsPage = ({ isInternal }) => {
   const { requestId } = useParams();
   const dispatch = useDispatch();
   React.useEffect(() => {
-    fetch(`${API_BASE}/cross-account-requests/${requestId}/`)
+    fetch(
+      `${API_BASE}/cross-account-requests/${requestId}/${
+        isInternal ? '?query_by=user_id' : ''
+      }`,
+      { headers: { Accept: 'application/json' } }
+    )
       .then((res) => res.json())
       .then((res) => {
         if (res.errors) {

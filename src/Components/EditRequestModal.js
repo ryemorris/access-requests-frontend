@@ -340,9 +340,9 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
   React.useEffect(() => {
     const userPromise = window.insights.chrome.auth.getUser();
     const detailsPromise = isEdit
-      ? fetch(`${API_BASE}/cross-account-requests/${requestId}/`).then((res) =>
-          res.json()
-        )
+      ? fetch(`${API_BASE}/cross-account-requests/${requestId}/`, {
+          headers: { Accept: 'application/json' },
+        }).then((res) => res.json())
       : new Promise((res) => res(true));
 
     Promise.all([userPromise, detailsPromise])
@@ -393,6 +393,7 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
         method: isEdit ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Accept: 'application/json',
         },
         body: JSON.stringify(body),
       }

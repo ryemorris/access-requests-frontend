@@ -134,7 +134,7 @@ const AccessRequestsTable = ({ isInternal }) => {
       .replace(' ', '_')}`;
     listUrl.searchParams.append('order_by', orderBy);
 
-    fetch(listUrl.href)
+    fetch(listUrl.href, { headers: { Accept: 'application/json' } })
       .then((res) => res.json())
       .then((res) => {
         setNumRows(res.meta.count);
