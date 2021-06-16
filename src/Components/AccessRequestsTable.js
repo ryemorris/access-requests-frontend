@@ -79,7 +79,7 @@ const AccessRequestsTable = ({ isInternal }) => {
 
   // Pagination
   const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(10);
+  const [perPage, setPerPage] = React.useState(20);
   const AccessRequestsPagination = ({ id }) => (
     <Pagination
       itemCount={numRows}
@@ -88,7 +88,10 @@ const AccessRequestsTable = ({ isInternal }) => {
       onSetPage={(_ev, pageNumber) => setPage(pageNumber)}
       id={'access-requests-table-pagination-' + id}
       variant={id}
-      onPerPageSelect={(_ev, perPage) => setPerPage(perPage)}
+      perPageOptions={[5, 10, 20, 50].map(n => (
+        { title: n, value: n }
+      ))}
+      onPerPageSelect={(_ev, perPage) => {setPage(1); setPerPage(perPage)}}
     />
   );
 
