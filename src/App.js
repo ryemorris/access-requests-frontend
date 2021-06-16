@@ -13,7 +13,9 @@ const App = () => {
     const unregister = insights.chrome.on('APP_NAVIGATION', (event) =>
       history.push(`/${event.navId}`)
     );
-    return () => { unregister(); };
+    return () => {
+      unregister();
+    };
   }, []);
 
   return (

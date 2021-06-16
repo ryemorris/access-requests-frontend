@@ -16,7 +16,7 @@ const { config: webpackConfig, plugins } = config({
     backofficeProxy,
     ...defaultServices,
   },
-  useProxy: true
+  useProxy: true,
 });
 plugins.push(...commonPlugins);
 

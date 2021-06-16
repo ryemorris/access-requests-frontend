@@ -79,7 +79,9 @@ const BaseAccessRequestDetailsPage = ({ isInternal }) => {
         <Breadcrumb>
           <BreadcrumbItem
             render={() => (
-              <Link to={isInternal ? "/" : "/access-requests"}>{!isInternal && 'Red Hat '}Access Requests</Link>
+              <Link to={isInternal ? '/' : '/access-requests'}>
+                {!isInternal && 'Red Hat '}Access Requests
+              </Link>
             )}
           />
           <BreadcrumbItem>{requestId}</BreadcrumbItem>

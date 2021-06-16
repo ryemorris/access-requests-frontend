@@ -39,7 +39,6 @@ import PropTypes from 'prop-types';
 
 let rolesCache = [];
 let applicationsCache = [];
-let filterTimer;
 
 const MUARolesTable = ({
   roles: selectedRoles,

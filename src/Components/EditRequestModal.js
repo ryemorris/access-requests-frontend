@@ -489,12 +489,20 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
         isOpen
         onClose={() => setWarnClose(false)}
         actions={[
-          <Button key="confirm" variant="primary" onClick={() => onClose(false)}>
+          <Button
+            key="confirm"
+            variant="primary"
+            onClick={() => onClose(false)}
+          >
             Exit
           </Button>,
-          <Button key="cancel" variant="link" onClick={() => setWarnClose(false)}>
+          <Button
+            key="cancel"
+            variant="link"
+            onClick={() => setWarnClose(false)}
+          >
             Stay
-          </Button>
+          </Button>,
         ]}
       >
         All inputs will be discarded.
@@ -516,7 +524,7 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
         descriptionId={descriptionId}
         title={capitalize(variant) + ' request'}
         steps={steps}
-        onClose={() => isDirty ? setWarnClose(true) : onClose(false)}
+        onClose={() => (isDirty ? setWarnClose(true) : onClose(false))}
         onSave={onSave}
         onNext={() => setError()}
         onBack={() => setError()}
