@@ -333,7 +333,9 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
   const [start, setStart] = React.useState();
   const [end, setEnd] = React.useState();
   const [roles, setRoles] = React.useState([]);
+  const [warnClose, setWarnClose] = React.useState(false);
   const dispatch = useDispatch();
+  const isDirty = targetAccount || start || end || roles.length > 0;
 
   // We need to be logged in (and see the username) which is an async request.
   // If we're editing we also need to fetch the roles
@@ -478,6 +480,27 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
 
   const titleId = `${variant}-request`;
   const descriptionId = `${variant} request`;
+  if (warnClose) {
+    return (
+      <Modal
+        title="Exit request creation?"
+        variant="small"
+        titleIconVariant="warning"
+        isOpen
+        onClose={() => setWarnClose(false)}
+        actions={[
+          <Button key="confirm" variant="primary" onClick={() => onClose(false)}>
+            Exit
+          </Button>,
+          <Button key="cancel" variant="link" onClick={() => setWarnClose(false)}>
+            Stay
+          </Button>
+        ]}
+      >
+        All inputs will be discarded.
+      </Modal>
+    );
+  }
   return (
     <Modal
       variant="large"
@@ -485,7 +508,6 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
       showClose={false}
       hasNoBodyWrapper
       isOpen
-      onClose={() => onClose(false)}
       aria-describedby={descriptionId}
       aria-labelledby={titleId}
     >
@@ -494,7 +516,7 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
         descriptionId={descriptionId}
         title={capitalize(variant) + ' request'}
         steps={steps}
-        onClose={() => onClose(false)}
+        onClose={() => isDirty ? setWarnClose(true) : onClose(false)}
         onSave={onSave}
         onNext={() => setError()}
         onBack={() => setError()}

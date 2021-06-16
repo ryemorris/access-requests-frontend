@@ -102,7 +102,6 @@ const MUARolesTable = ({
   const [filterColumn, setFilterColumn] = React.useState(columns[0]);
   const [isSelectOpen, setIsSelectOpen] = React.useState(false);
   const [appSelections, setAppSelections] = React.useState([]);
-  const [nameFilterInput, setNameFilterInput] = React.useState('');
   const [nameFilter, setNameFilter] = React.useState('');
   const hasFilters = appSelections.length > 0 || nameFilter;
   const selectLabelId = 'filter-application';
