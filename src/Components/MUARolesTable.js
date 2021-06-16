@@ -39,6 +39,7 @@ import PropTypes from 'prop-types';
 
 let rolesCache = [];
 let applicationsCache = [];
+let filterTimer;
 
 const MUARolesTable = ({
   roles: selectedRoles,
@@ -301,30 +302,16 @@ const MUARolesTable = ({
                 </Select>
               </React.Fragment>
             ) : (
-              <form
-                style={{ display: 'flex' }}
-                onSubmit={(ev) => {
-                  ev.preventDefault();
-                  setNameFilter(nameFilterInput);
-                }}
-              >
-                <TextInput
-                  name="rolesSearch"
-                  id="rolesSearch"
-                  type="search"
-                  aria-label="Search input"
-                  placeholder="Filter by role name"
-                  value={nameFilterInput}
-                  onChange={(val) => setNameFilterInput(val)}
-                />
-                <Button
-                  variant="control"
-                  type="submit"
-                  aria-label="Search button for roles input"
-                >
-                  <SearchIcon />
-                </Button>
-              </form>
+              <TextInput
+                name="rolesSearch"
+                id="rolesSearch"
+                type="search"
+                iconVariant="search"
+                aria-label="Search input"
+                placeholder="Filter by role name"
+                value={nameFilter}
+                onChange={(val) => setNameFilter(val)}
+              />
             )}
           </InputGroup>
         </ToolbarItem>

@@ -45,6 +45,7 @@ function uncapitalize(input) {
 }
 
 const statuses = ['pending', 'approved', 'denied', 'cancelled', 'expired'];
+let filterTimer;
 
 const AccessRequestsTable = ({ isInternal }) => {
   const columns = isInternal
@@ -102,7 +103,12 @@ const AccessRequestsTable = ({ isInternal }) => {
   );
   const [isSelectOpen, setIsSelectOpen] = React.useState(false);
   const [statusSelections, setStatusSelections] = React.useState([]);
+
+  // Harder than it needs to be to match rest of RBAC which doesn't wait
+  // for user to click a button or press enter.
   const [accountFilter, setAccountFilter] = React.useState('');
+  const [inputValue, setInputValue] = React.useState('');
+  const [filtersDirty, setFiltersDirty] = React.useState(false);
   const hasFilters = statusSelections.length > 0 || accountFilter;
 
   // Row loading
@@ -216,7 +222,7 @@ const AccessRequestsTable = ({ isInternal }) => {
       Create request
     </Button>
   );
-  if (rows.length === 0 && !isLoading && !hasFilters) {
+  if (rows.length === 0 && !isLoading && !filtersDirty) {
     return (
       <Bullseye style={{ height: 'auto' }} className="pf-u-mt-lg">
         <EmptyState variant="large">
@@ -240,42 +246,6 @@ const AccessRequestsTable = ({ isInternal }) => {
   const selectPlaceholder = `Filter by ${uncapitalize(
     columns[columns.length - 1]
   )}`;
-  const FilterTextForm = ({ colName, value, setValue }) => {
-    const [inputValue, setInputValue] = React.useState(value);
-    return (
-      <form
-        style={{ display: 'flex' }}
-        onSubmit={(ev) => {
-          ev.preventDefault();
-          setValue(inputValue);
-        }}
-      >
-        <TextInput
-          name={`${colName}-filter`}
-          id={`${colName}-filter`}
-          type="search"
-          placeholder={`Filter by ${uncapitalize(colName)}`}
-          aria-label={`${colName} search input`}
-          value={inputValue}
-          onChange={(val) => setInputValue(val)}
-        />
-        <Button
-          variant="control"
-          type="submit"
-          aria-label={`Search button for ${colName} filter`}
-        >
-          <SearchIcon />
-        </Button>
-      </form>
-    );
-  };
-
-  FilterTextForm.propTypes = {
-    colName: PropTypes.string,
-    value: PropTypes.string,
-    setValue: PropTypes.func,
-  };
-
   const clearFiltersButton = (
     <Button
       variant="link"
@@ -298,6 +268,7 @@ const AccessRequestsTable = ({ isInternal }) => {
                 setIsDropdownOpen(false);
                 setFilterColumn(ev.target.value);
                 setIsSelectOpen(false);
+                setFiltersDirty(true);
               }}
               toggle={
                 <DropdownToggle
@@ -353,11 +324,30 @@ const AccessRequestsTable = ({ isInternal }) => {
               </React.Fragment>
             )}
             {filterColumn === 'Account number' && (
-              <FilterTextForm
-                colName={filterColumn}
-                value={accountFilter}
-                setValue={setAccountFilter}
-              />
+              <form
+                style={{ display: 'flex' }}
+                onSubmit={(ev) => {
+                  ev.preventDefault();
+                  setAccountFilter(inputValue);
+                  setFiltersDirty(true);
+                }}
+              >
+                <TextInput
+                  name={`${filterColumn}-filter`}
+                  id={`${filterColumn}-filter`}
+                  type="search"
+                  iconVariant="search"
+                  placeholder={`Filter by ${uncapitalize(filterColumn)}`}
+                  aria-label={`${filterColumn} search input`}
+                  value={inputValue}
+                  onChange={(val) => {
+                    setInputValue(val);
+                    setFiltersDirty(true);
+                    clearTimeout(filterTimer);
+                    filterTimer = setTimeout(() => setAccountFilter(inputValue), 1000);
+                  }}
+                />
+              </form>
             )}
           </InputGroup>
         </ToolbarItem>
