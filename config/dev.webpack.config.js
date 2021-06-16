@@ -16,7 +16,8 @@ const { config: webpackConfig, plugins } = config({
     backofficeProxy,
     ...defaultServices,
   },
-  useProxy: true,
+  //useProxy: true,
+  //appUrl: ['/beta/internal/access-requests', '/internal/access-requests']
 });
 plugins.push(...commonPlugins);
 

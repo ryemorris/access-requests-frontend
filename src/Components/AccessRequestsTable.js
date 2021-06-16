@@ -402,16 +402,17 @@ const AccessRequestsTable = ({ isInternal }) => {
           {columns.map((column, columnIndex) => (
             <Th
               key={columnIndex}
-              {...(!column.includes('name') && {
-                sort: {
-                  sortBy: {
-                    index: activeSortIndex,
-                    direction: activeSortDirection,
+              {...(!column.includes('name') &&
+                column !== 'Decision' && {
+                  sort: {
+                    sortBy: {
+                      index: activeSortIndex,
+                      direction: activeSortDirection,
+                    },
+                    onSort,
+                    columnIndex,
                   },
-                  onSort,
-                  columnIndex,
-                },
-              })}
+                })}
               width={getColumnWidth(columnIndex)}
             >
               {column}
