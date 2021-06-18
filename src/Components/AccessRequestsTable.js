@@ -46,7 +46,6 @@ function uncapitalize(input) {
 }
 
 const statuses = ['pending', 'approved', 'denied', 'cancelled', 'expired'];
-let filterTimer = undefined;
 
 const AccessRequestsTable = ({ isInternal }) => {
   const columns = isInternal
@@ -183,7 +182,10 @@ const AccessRequestsTable = ({ isInternal }) => {
         );
       });
   };
-  const debouncedFetchAccessRequests = React.useCallback(debounce(fetchAccessRequests, 400), []);
+  const debouncedFetchAccessRequests = React.useCallback(
+    debounce(fetchAccessRequests, 400),
+    []
+  );
   React.useEffect(() => {
     debouncedFetchAccessRequests();
   }, [
@@ -342,8 +344,7 @@ const AccessRequestsTable = ({ isInternal }) => {
                   aria-label={`${filterColumn} search input`}
                   value={accountFilter}
                   onChange={(val) => {
-                    setAccountFilter(val),
-                    setFiltersDirty(true);
+                    setAccountFilter(val), setFiltersDirty(true);
                   }}
                 />
               </form>
