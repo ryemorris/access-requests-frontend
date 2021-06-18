@@ -19,6 +19,7 @@ import {
   EmptyStateIcon,
   EmptyStateBody,
   Title,
+  debounce,
 } from '@patternfly/react-core';
 import {
   TableComposable,
@@ -111,7 +112,6 @@ const AccessRequestsTable = ({ isInternal }) => {
   // Harder than it needs to be to match rest of RBAC which doesn't wait
   // for user to click a button or press enter.
   const [accountFilter, setAccountFilter] = React.useState('');
-  const [inputValue, setInputValue] = React.useState('');
   const [filtersDirty, setFiltersDirty] = React.useState(false);
   const hasFilters = statusSelections.length > 0 || accountFilter;
 
@@ -183,8 +183,9 @@ const AccessRequestsTable = ({ isInternal }) => {
         );
       });
   };
+  const debouncedFetchAccessRequests = React.useCallback(debounce(fetchAccessRequests, 400), []);
   React.useEffect(() => {
-    fetchAccessRequests();
+    debouncedFetchAccessRequests();
   }, [
     accountFilter,
     statusSelections,
@@ -199,7 +200,7 @@ const AccessRequestsTable = ({ isInternal }) => {
   const onModalClose = (isChanged) => {
     setOpenModal({ type: null });
     if (isChanged) {
-      fetchAccessRequests();
+      debouncedFetchAccessRequests();
     }
   };
   const modals = (
@@ -330,11 +331,7 @@ const AccessRequestsTable = ({ isInternal }) => {
             {filterColumn === 'Account number' && (
               <form
                 style={{ display: 'flex' }}
-                onSubmit={(ev) => {
-                  ev.preventDefault();
-                  setAccountFilter(inputValue);
-                  setFiltersDirty(true);
-                }}
+                onSubmit={(ev) => ev.preventDefault()}
               >
                 <TextInput
                   name={`${filterColumn}-filter`}
@@ -343,15 +340,10 @@ const AccessRequestsTable = ({ isInternal }) => {
                   iconVariant="search"
                   placeholder={`Filter by ${uncapitalize(filterColumn)}`}
                   aria-label={`${filterColumn} search input`}
-                  value={inputValue}
+                  value={accountFilter}
                   onChange={(val) => {
-                    setInputValue(val);
+                    setAccountFilter(val),
                     setFiltersDirty(true);
-                    clearTimeout(filterTimer);
-                    filterTimer = setTimeout(
-                      () => setAccountFilter(inputValue),
-                      1000
-                    );
                   }}
                 />
               </form>
