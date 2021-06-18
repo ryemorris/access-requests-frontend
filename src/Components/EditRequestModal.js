@@ -334,8 +334,9 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
   const [end, setEnd] = React.useState();
   const [roles, setRoles] = React.useState([]);
   const [warnClose, setWarnClose] = React.useState(false);
+  const [step, setStep] = React.useState(1);
   const dispatch = useDispatch();
-  const isDirty = targetAccount || start || end || roles.length > 0;
+  const isDirty = Boolean(targetAccount || start || end || roles.length > 0);
 
   // We need to be logged in (and see the username) which is an async request.
   // If we're editing we also need to fetch the roles
@@ -480,57 +481,67 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
 
   const titleId = `${variant}-request`;
   const descriptionId = `${variant} request`;
-  if (warnClose) {
-    return (
-      <Modal
-        title="Exit request creation?"
-        variant="small"
-        titleIconVariant="warning"
-        isOpen
-        onClose={() => setWarnClose(false)}
-        actions={[
-          <Button
-            key="confirm"
-            variant="primary"
-            onClick={() => onClose(false)}
-          >
-            Exit
-          </Button>,
-          <Button
-            key="cancel"
-            variant="link"
-            onClick={() => setWarnClose(false)}
-          >
-            Stay
-          </Button>,
-        ]}
-      >
-        All inputs will be discarded.
-      </Modal>
-    );
-  }
   return (
-    <Modal
-      variant="large"
-      style={{ height: '900px' }}
-      showClose={false}
-      hasNoBodyWrapper
-      isOpen
-      aria-describedby={descriptionId}
-      aria-labelledby={titleId}
-    >
-      <Wizard
-        titleId={titleId}
-        descriptionId={descriptionId}
-        title={capitalize(variant) + ' request'}
-        steps={steps}
-        onClose={() => (isDirty ? setWarnClose(true) : onClose(false))}
-        onSave={onSave}
-        onNext={() => setError()}
-        onBack={() => setError()}
-        onGoToStep={() => setError()}
-      />
-    </Modal>
+    <React.Fragment>
+      <Modal
+        variant="large"
+        style={{ height: '900px' }}
+        showClose={false}
+        hasNoBodyWrapper
+        isOpen={!warnClose}
+        aria-describedby={descriptionId}
+        aria-labelledby={titleId}
+      >
+        <Wizard
+          titleId={titleId}
+          descriptionId={descriptionId}
+          title={capitalize(variant) + ' request'}
+          steps={steps}
+          onClose={() => (isDirty ? setWarnClose(true) : onClose(false))}
+          onSave={onSave}
+          startAtStep={step}
+          onNext={({ id }) => {
+            setError();
+            setStep(id);
+          }}
+          onBack={({ id }) => {
+            setError();
+            setStep(id);
+          }}
+          onGoToStep={({ id }) => {
+            setError();
+            setStep(id);
+          }}
+        />
+      </Modal>
+      {warnClose && (
+        <Modal
+          title="Exit request creation?"
+          variant="small"
+          titleIconVariant="warning"
+          isOpen
+          onClose={() => setWarnClose(false)}
+          actions={[
+            <Button
+              key="confirm"
+              variant="primary"
+              onClick={() => onClose(false)}
+            >
+              Exit
+            </Button>,
+            <Button
+              key="cancel"
+              variant="link"
+              onClick={() => setWarnClose(false)}
+            >
+              Stay
+            </Button>,
+          ]}
+        >
+          All inputs will be discarded.
+        </Modal>
+      )}
+    </React.Fragment>
   );
 };
 

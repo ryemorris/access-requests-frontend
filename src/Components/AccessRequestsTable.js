@@ -45,7 +45,7 @@ function uncapitalize(input) {
 }
 
 const statuses = ['pending', 'approved', 'denied', 'cancelled', 'expired'];
-let filterTimer;
+let filterTimer = undefined;
 
 const AccessRequestsTable = ({ isInternal }) => {
   const columns = isInternal
