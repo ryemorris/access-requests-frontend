@@ -19,7 +19,6 @@ import {
   EmptyStateIcon,
   EmptyStateBody,
   Title,
-  debounce,
 } from '@patternfly/react-core';
 import {
   TableComposable,
@@ -43,6 +42,39 @@ import PropTypes from 'prop-types';
 
 function uncapitalize(input) {
   return input[0].toLowerCase() + input.substring(1);
+}
+
+// https://dev.to/gabe_ragland/debouncing-with-react-hooks-jci
+function useDebounce(value, delay) {
+  // State and setters for debounced value
+  const [debouncedValue, setDebouncedValue] = React.useState(value);
+
+  React.useEffect(
+    () => {
+      // Set debouncedValue to value (passed in) after the specified delay
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+
+      // Return a cleanup function that will be called every time ...
+      // ... useEffect is re-called. useEffect will only be re-called ...
+      // ... if value changes (see the inputs array below).
+      // This is how we prevent debouncedValue from changing if value is ...
+      // ... changed within the delay period. Timeout gets cleared and restarted.
+      // To put it in context, if the user is typing within our app's ...
+      // ... search box, we don't want the debouncedValue to update until ...
+      // ... they've stopped typing for more than 500ms.
+      return () => {
+        clearTimeout(handler);
+      };
+    },
+    // Only re-call effect if value changes
+    // You could also add the "delay" var to inputs array if you ...
+    // ... need to be able to change that dynamically.
+    [value]
+  );
+
+  return debouncedValue;
 }
 
 const statuses = ['pending', 'approved', 'denied', 'cancelled', 'expired'];
@@ -182,14 +214,11 @@ const AccessRequestsTable = ({ isInternal }) => {
         );
       });
   };
-  const debouncedFetchAccessRequests = React.useCallback(
-    debounce(fetchAccessRequests, 400),
-    []
-  );
+  const debouncedAccountFilter = useDebounce(accountFilter, 400);
   React.useEffect(() => {
-    debouncedFetchAccessRequests();
+    fetchAccessRequests();
   }, [
-    accountFilter,
+    debouncedAccountFilter,
     statusSelections,
     activeSortIndex,
     activeSortDirection,
@@ -202,7 +231,7 @@ const AccessRequestsTable = ({ isInternal }) => {
   const onModalClose = (isChanged) => {
     setOpenModal({ type: null });
     if (isChanged) {
-      debouncedFetchAccessRequests();
+      fetchAccessRequests();
     }
   };
   const modals = (
