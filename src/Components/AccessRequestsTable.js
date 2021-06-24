@@ -125,6 +125,7 @@ const AccessRequestsTable = ({ isInternal }) => {
         setPage(1);
         setPerPage(perPage);
       }}
+      isCompact={id === 'top'}
     />
   );
 
