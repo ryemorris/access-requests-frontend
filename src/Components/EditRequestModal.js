@@ -424,7 +424,7 @@ const EditRequestModal = ({ requestId, variant, onClose }) => {
       target_account: targetAccount,
       start_date: start,
       end_date: end,
-      org_id: targetOrg,
+      target_org: targetOrg,
       roles,
     };
     apiInstance[isEdit ? 'put' : 'post'](
