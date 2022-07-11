@@ -158,11 +158,9 @@ const AccessRequestsTable = ({ isInternal }) => {
     const listUrl = new URL(
       `${window.location.origin}${API_BASE}/cross-account-requests/`
     );
-
-    isInternal
-      ? listUrl.searchParams.append('query_by', 'user_id')
-      : listUrl.searchParams.append('query_by', 'target_account');
-
+    if (isInternal) {
+      listUrl.searchParams.append('query_by', 'user_id');
+    }
     listUrl.searchParams.append('offset', (page - 1) * perPage);
     listUrl.searchParams.append('limit', perPage);
     // https://github.com/RedHatInsights/insights-rbac/blob/master/rbac/api/cross_access/view.py
