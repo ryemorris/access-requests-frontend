@@ -1,22 +1,22 @@
-import { 
-    Toolbar,
-    ToolbarContent,
-    ToolbarItem,
-    Dropdown,
-    DropdownItem,
-    DropdownToggle,
-    InputGroup,
-    TextInput,
-    ChipGroup,
-    Chip,
-    Select,
-    SelectOption,
-    DropdownToggleCheckbox,
+import {
+  Toolbar,
+  ToolbarContent,
+  ToolbarItem,
+  Dropdown,
+  DropdownItem,
+  DropdownToggle,
+  InputGroup,
+  TextInput,
+  ChipGroup,
+  Chip,
+  Select,
+  SelectOption,
+  DropdownToggleCheckbox,
 } from '@patternfly/react-core';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
+import PropTypes from 'prop-types';
 import React from 'react';
-
 
 const RoleToolbar = ({
   selectedRoles,
@@ -203,6 +203,25 @@ const RoleToolbar = ({
     </Toolbar>
     </React.Fragment>
   )
+}
+
+RoleToolbar.propTypes = {
+  selectedRoles: PropTypes.any,
+  setSelectedRoles: PropTypes.any,
+  isChecked: PropTypes.bool,
+  appSelections: PropTypes.any,
+  setAppSelections: PropTypes.any,
+  columns: PropTypes.any,
+  rows: PropTypes.any,
+  filteredRows: PropTypes.any,
+  pagedRows: PropTypes.any,
+  anySelected: PropTypes.any,
+  clearFiltersButton: PropTypes.any,
+  perPage: PropTypes.any,
+  nameFilter: PropTypes.any,
+  setNameFilter: PropTypes.any,
+  AccessRequestsPagination: PropTypes.any,
+  applications: PropTypes.any,
 }
 
 export default RoleToolbar;

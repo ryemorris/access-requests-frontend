@@ -38,40 +38,40 @@ const MUARolesTable = ({
   const [appSelections, setAppSelections] = React.useState([]);
   React.useEffect(() => {
     if (rolesCache.length === 0 || applicationsCache.length === 0) {
-      apiInstance.get(
-        `${API_BASE}/roles/?limit=9999&order_by=display_name&add_fields=groups_in_count`,
-        { headers: { Accept: 'application/json' } }
-      )
-      .then(({ data }) => {
-        data.forEach((role) => {
-          role.isExpanded = false;
-          role.permissions = role.accessCount;
-        });
-        rolesCache = data.map((role) => Object.assign({}, role));
-        setRows(data);
-
-        // Build application filter from data
-        const apps = Array.from(
-          data
-            .map((role) => role.applications)
-            .flat()
-            .reduce((acc, cur) => {
-              acc.add(cur);
-              return acc;
-            }, new Set())
-        ).sort();
-        applicationsCache = apps;
-        setApplications(apps);
-      })
-      .catch((err) =>
-        dispatch(
-          addNotification({
-            variant: 'danger',
-            title: 'Could not fetch roles list',
-            description: err.message,
-          })
+      apiInstance
+        .get(
+          `${API_BASE}/roles/?limit=9999&order_by=display_name&add_fields=groups_in_count`,
+          { headers: { Accept: 'application/json' } }
         )
-      );
+        .then(({ data }) => {
+          data.forEach((role) => {
+            role.isExpanded = false;
+            role.permissions = role.accessCount;
+          });
+          rolesCache = data.map((role) => Object.assign({}, role));
+          setRows(data);
+          // Build application filter from data
+          const apps = Array.from(
+            data
+              .map((role) => role.applications)
+              .flat()
+              .reduce((acc, cur) => {
+                acc.add(cur);
+                return acc;
+              }, new Set())
+          ).sort();
+          applicationsCache = apps;
+          setApplications(apps);
+        })
+        .catch((err) =>
+          dispatch(
+            addNotification({
+              variant: 'danger',
+              title: 'Could not fetch roles list',
+              description: err.message,
+            })
+          )
+        );
     }
   }, []);
 
@@ -166,26 +166,26 @@ const MUARolesTable = ({
       Clear filters
     </Button>
   );
-  
-  const roleToolbar = isReadOnly
-                        ? null
-                        : <RoleToolbar 
-                            selectedRoles={selectedRoles}
-                            setSelectedRoles={setSelectedRoles}
-                            isChecked={isChecked}
-                            appSelections={appSelections}
-                            setAppSelections={setAppSelections}
-                            columns={columns}
-                            rows={rows}
-                            filteredRows={filteredRows}
-                            pagedRows={pagedRows}
-                            clearFiltersButton={clearFiltersButton}
-                            perPage={perPage}
-                            nameFilter={nameFilter}
-                            setNameFilter={setNameFilter}
-                            AccessRequestsPagination={AccessRequestsPagination}
-                            applications={applications}
-                          />;
+
+  const roleToolbar = isReadOnly ? null : (
+    <RoleToolbar
+      selectedRoles={selectedRoles}
+      setSelectedRoles={setSelectedRoles}
+      isChecked={isChecked}
+      appSelections={appSelections}
+      setAppSelections={setAppSelections}
+      columns={columns}
+      rows={rows}
+      filteredRows={filteredRows}
+      pagedRows={pagedRows}
+      clearFiltersButton={clearFiltersButton}
+      perPage={perPage}
+      nameFilter={nameFilter}
+      setNameFilter={setNameFilter}
+      AccessRequestsPagination={AccessRequestsPagination}
+      applications={applications}
+    />
+  );
 
   const expandedColumns = ['Application', 'Resource type', 'Operation'];
   const dispatch = useDispatch();
@@ -228,7 +228,7 @@ const MUARolesTable = ({
               columnIndex: 'name',
             }}
           >
-          {columns[0]}
+            {columns[0]}
           </Th>
           <Th
             width={50}
@@ -241,7 +241,7 @@ const MUARolesTable = ({
               columnIndex: 'description',
             }}
           >
-          {columns[1]}
+            {columns[1]}
           </Th>
           <Th
             width={10}
@@ -255,7 +255,7 @@ const MUARolesTable = ({
             }}
             modifier="nowrap"
           >
-          {columns[2]}
+            {columns[2]}
           </Th>
         </Tr>
       </Thead>
@@ -270,7 +270,7 @@ const MUARolesTable = ({
                     style={{ height: '22px' }}
                     className="ins-c-skeleton ins-c-skeleton__md"
                   >
-                  {' '}
+                    {' '}
                   </div>
                 </Td>
               ))}
