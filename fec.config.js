@@ -1,7 +1,7 @@
 const plugins = require('./config/plugins.js');
 
 module.exports = {
-  appUrl: ['/internal/access-requests'],
+  appUrl: ['/internal/access-requests', '/settings/rbac/access-requests'],
   debug: true,
   useProxy: true,
   proxyVerbose: true,
