@@ -167,7 +167,7 @@ const RoleToolbar = ({
                     onSelect={(_ev, selection) => {
                       if (appSelections.includes(selection)) {
                         setAppSelections(
-                          appSelections.filter((s) => s !== selection)
+                          (prev => prev.filter((s) => s !== selection))
                         );
                       } else {
                         setAppSelections([...appSelections, selection]);
@@ -218,7 +218,7 @@ const RoleToolbar = ({
                     key={status}
                     onClick={() =>
                       setAppSelections(
-                        appSelections.filter((s) => s !== status)
+                        (prev => prev.filter((s) => s !== status))
                       )
                     }
                   >
