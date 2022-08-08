@@ -16,7 +16,10 @@ import {
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useReducer } from 'react';
+
+const selectLabelId = 'filter-application';
+const selectPlaceholder = 'Filter by application';
 
 const RoleToolbar = ({
   selectedRoles,
@@ -36,22 +39,42 @@ const RoleToolbar = ({
   AccessRequestsPagination,
   applications,
 }) => {
-    const [isBulkSelectOpen, setIsBulkSelectOpen] = React.useState(false);
-    // Filtering
-    const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
-    const [filterColumn, setFilterColumn] = React.useState(columns[0]);
-    const [isSelectOpen, setIsSelectOpen] = React.useState(false);
-    const selectLabelId = 'filter-application';
-    const selectPlaceholder = 'Filter by application';
-    const hasFilters = appSelections.length > 0 || nameFilter;
 
-    const onSelectAll = (_ev, isSelected) => {
-      if (isSelected) {
-          setSelectedRoles(filteredRows.map((row) => row.display_name));
-      } else {
-          setSelectedRoles([]);
-      }
-    };
+  const initialValue = {
+    isDropdownOpen: false,
+    isSelectOpen: false,
+    isBulkSelectOpen: false,
+    filterColumn: columns[0],
+  };
+  
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case 'set':
+        return {
+          ...state,
+          [action.payload.key]: action.payload.value,
+        };
+      case 'reset':
+        return initialState;
+      default: 
+        throw new Error('Unknown action type: ${action.type}');
+    }
+  }
+  const [state, dispatch] = useReducer(reducer, initialValue);
+  const setActions = (name, value) => {
+    dispatch({
+      type: 'set',
+      payload: {key: name, value: value},
+    });
+  }
+  const hasFilters = appSelections.length > 0 || nameFilter;
+  const onSelectAll = (_ev, isSelected) => {
+    if (isSelected) {
+        setSelectedRoles(filteredRows.map((row) => row.display_name));
+    } else {
+        setSelectedRoles([]);
+    }
+  }; 
 
   return (
   <React.Fragment>
@@ -59,7 +82,7 @@ const RoleToolbar = ({
       <ToolbarContent>
         <ToolbarItem>
           <Dropdown
-            onSelect={() => setIsBulkSelectOpen(!isBulkSelectOpen)}
+            onSelect={() => setActions("isBulkSelectOpen", !state.isBulkSelectOpen)}
             position="left"
             toggle={
               <DropdownToggle
@@ -72,7 +95,7 @@ const RoleToolbar = ({
                     onClick={() => onSelectAll(null, !anySelected)}
                   />,
                 ]}
-                onToggle={(isOpen) => setIsBulkSelectOpen(isOpen)}
+                onToggle={(isOpen) => setActions("isBulkSelectOpen", isOpen)}
                 isDisabled={rows.length === 0}
               >
                 {selectedRoles.length !== 0 && (
@@ -82,7 +105,7 @@ const RoleToolbar = ({
                 )}
               </DropdownToggle>
             }
-            isOpen={isBulkSelectOpen}
+            isOpen={state.isBulkSelectOpen}
             dropdownItems={[
               <DropdownItem key="0" onClick={() => onSelectAll(null, false)}>
                 Select none (0 items)
@@ -106,17 +129,17 @@ const RoleToolbar = ({
         <ToolbarItem>
           <InputGroup>
             <Dropdown
-              isOpen={isDropdownOpen}
+              isOpen={state.isDropdownOpen}
               onSelect={(ev) => {
-                setIsDropdownOpen(false);
-                setFilterColumn(ev.target.value);
-                setIsSelectOpen(false);
+                setActions('isDropdownOpen', false);
+                setActions('isSelectOpen', false)
+                setActions('filterColumn', ev.target.value);
               }}
               toggle={
                 <DropdownToggle
-                  onToggle={(isOpen) => setIsDropdownOpen(isOpen)}
+                  onToggle={(isOpen) => setActions('isDropdownOpen', isOpen)}
                 >
-                  <FilterIcon /> {filterColumn}
+                  <FilterIcon /> {state.filterColumn}
                 </DropdownToggle>
               }
               dropdownItems={['Role name', 'Application'].map((colName) => (
@@ -126,7 +149,7 @@ const RoleToolbar = ({
                 </DropdownItem>
               ))}
             />
-            {filterColumn === 'Application' ? (
+            {state.filterColumn === 'Application' ? (
               <React.Fragment>
                 <span id={selectLabelId} hidden>
                   {selectPlaceholder}
@@ -135,7 +158,7 @@ const RoleToolbar = ({
                   aria-labelledby={selectLabelId}
                   variant="checkbox"
                   aria-label="Select applications"
-                  onToggle={(isOpen) => setIsSelectOpen(isOpen)}
+                  onToggle={(isOpen) => setActions("isSelectOpen", isOpen)}
                   onSelect={(_ev, selection) => {
                     if (appSelections.includes(selection)) {
                       setAppSelections(
@@ -145,11 +168,11 @@ const RoleToolbar = ({
                       setAppSelections([...appSelections, selection]);
                     }
                   }}
-                  isOpen={isSelectOpen}
+                  isOpen={state.isSelectOpen}
                   selections={appSelections}
                   isCheckboxSelectionBadgeHidden
                   placeholderText={selectPlaceholder}
-                  style={{ maxHeight: '400px', overflowY: 'auto' }}
+                  className="select-toolbar"
                 >
                   {applications.map((app) => (
                     <SelectOption key={app} value={app}>
@@ -206,22 +229,22 @@ const RoleToolbar = ({
 }
 
 RoleToolbar.propTypes = {
-  selectedRoles: PropTypes.any,
-  setSelectedRoles: PropTypes.any,
+  selectedRoles: PropTypes.array,
+  setSelectedRoles: PropTypes.func,
   isChecked: PropTypes.bool,
   appSelections: PropTypes.any,
-  setAppSelections: PropTypes.any,
-  columns: PropTypes.any,
-  rows: PropTypes.any,
-  filteredRows: PropTypes.any,
-  pagedRows: PropTypes.any,
-  anySelected: PropTypes.any,
-  clearFiltersButton: PropTypes.any,
-  perPage: PropTypes.any,
-  nameFilter: PropTypes.any,
-  setNameFilter: PropTypes.any,
-  AccessRequestsPagination: PropTypes.any,
-  applications: PropTypes.any,
+  setAppSelections: PropTypes.func,
+  columns: PropTypes.array,
+  rows: PropTypes.array,
+  filteredRows: PropTypes.array,
+  pagedRows: PropTypes.array,
+  anySelected: PropTypes.bool,
+  clearFiltersButton: PropTypes.object,
+  perPage: PropTypes.number,
+  nameFilter: PropTypes.string,
+  setNameFilter: PropTypes.func,
+  AccessRequestsPagination: PropTypes.func,
+  applications: PropTypes.array,
 }
 
 export default RoleToolbar;
