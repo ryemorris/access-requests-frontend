@@ -166,8 +166,8 @@ const RoleToolbar = ({
                     onToggle={(isOpen) => setActions('isSelectOpen', isOpen)}
                     onSelect={(_ev, selection) => {
                       if (appSelections.includes(selection)) {
-                        setAppSelections(
-                          (prev => prev.filter((s) => s !== selection))
+                        setAppSelections((prev) =>
+                          prev.filter((s) => s !== selection)
                         );
                       } else {
                         setAppSelections([...appSelections, selection]);
@@ -217,8 +217,8 @@ const RoleToolbar = ({
                   <Chip
                     key={status}
                     onClick={() =>
-                      setAppSelections(
-                        (prev => prev.filter((s) => s !== status))
+                      setAppSelections((prev) =>
+                        prev.filter((s) => s !== status)
                       )
                     }
                   >

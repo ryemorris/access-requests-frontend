@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Title,
-  Button,
-  Pagination,
-  Tooltip,
-  EmptyState,
-  EmptyStateIcon,
-  EmptyStateBody,
-} from '@patternfly/react-core';
+import { Title, Button, Pagination, Tooltip } from '@patternfly/react-core';
 import {
   TableComposable,
   Thead,
@@ -16,13 +8,13 @@ import {
   Th,
   Td,
 } from '@patternfly/react-table';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { css } from '@patternfly/react-styles';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import PropTypes from 'prop-types';
 import apiInstance from '../Helpers/apiInstance';
 import RoleToolbar from './RoleToolbar';
+import MUANoResults from './MUANoResults';
 
 let rolesCache = [];
 let applicationsCache = [];
@@ -360,23 +352,10 @@ const MUARolesTable = ({
         </Tbody>
       ))}
       {pagedRows.length === 0 && hasFilters && (
-        <Tbody>
-          <Tr>
-            <Td colSpan={columns.length}>
-              <EmptyState variant="small">
-                <EmptyStateIcon icon={SearchIcon} />
-                <Title headingLevel="h2" size="lg">
-                  No matching requests found
-                </Title>
-                <EmptyStateBody>
-                  No results match the filter criteria. Remove all filters or
-                  clear all filters to show results.
-                </EmptyStateBody>
-                {clearFiltersButton}
-              </EmptyState>
-            </Td>
-          </Tr>
-        </Tbody>
+        <MUANoResults
+          columns={columns}
+          clearFiltersButton={clearFiltersButton}
+        />
       )}
     </TableComposable>
   );
