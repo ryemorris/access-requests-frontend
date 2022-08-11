@@ -12,7 +12,7 @@ import { css } from '@patternfly/react-styles';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import PropTypes from 'prop-types';
-import apiInstance from '../Helpers/apiInstance';
+import apiInstance from '../../Helpers/apiInstance';
 import RoleToolbar from './RoleToolbar';
 import MUANoResults from './MUANoResults';
 
@@ -305,7 +305,7 @@ const MUARolesTable = ({
               </button>
             </Td>
           </Tr>
-          <Tr isExpanded={row.isExpanded} borders={false}>
+          <Tr isExpanded={row.isExpanded} borders={'false'}>
             {!isReadOnly && <Td />}
             <Td className="pf-u-p-0" colSpan={3}>
               <TableComposable isCompact className="pf-m-no-border-rows">
