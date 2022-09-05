@@ -19,7 +19,7 @@ import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, Provider } from 'react-redux';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
-import MUARolesTable from '../Components/MUARolesTable';
+import MUARolesTable from '../Components/mua-roles-table/MUARolesTable';
 import CancelRequestModal from '../Components/CancelRequestModal';
 import AccessRequestWizard from '../Components/access-requests-wizard/AccessRequestsWizard';
 import { getLabelProps } from '../Helpers/getLabelProps';
