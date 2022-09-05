@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import { FormGroup } from '@patternfly/react-core';
-import MUARolesTable from '../MUARolesTable';
+import MUARolesTable from '../mua-roles-table/MUARolesTable';
 import { SELECTED_ROLES } from './schema';
 
 const SelectRoles = (props) => {

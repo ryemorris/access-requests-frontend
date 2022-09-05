@@ -519,23 +519,25 @@ const AccessRequestsTable = ({ isInternal }) => {
                 )}
               </Tr>
             ))}
-        {rows.length === 0 && hasFilters && (
+        {rows.length === 0 && hasFilters ? (
           <Tr>
             <Td colSpan={columns.length}>
-              <EmptyState variant="small">
-                <EmptyStateIcon icon={SearchIcon} />
-                <Title headingLevel="h2" size="lg">
-                  No matching requests found
-                </Title>
-                <EmptyStateBody>
-                  No results match the filter criteria. Remove all filters or
-                  clear all filters to show results.
-                </EmptyStateBody>
-                {clearFiltersButton}
-              </EmptyState>
+              <div>
+                <EmptyState variant="small">
+                  <EmptyStateIcon icon={SearchIcon} />
+                  <Title headingLevel="h2" size="lg">
+                    No matching requests found
+                  </Title>
+                  <EmptyStateBody>
+                    No results match the filter criteria. Remove all filters or
+                    clear all filters to show results.
+                  </EmptyStateBody>
+                  {clearFiltersButton}
+                </EmptyState>
+              </div>
             </Td>
           </Tr>
-        )}
+        ) : null}
       </Tbody>
     </TableComposable>
   );
