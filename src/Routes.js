@@ -48,20 +48,20 @@ export const Routes = () => {
         />
       )}
       <Switch>
-        <Route path="/" exact>
+        <Route path="/access-requests" exact>
           <AccessRequestsPage
             isInternal={isInternal}
             getRegistry={getRegistry}
           />
         </Route>
-        <Route path="/:requestId" exact>
+        <Route path="/access-requests/:requestId">
           <AccessRequestDetailsPage
             isInternal={isInternal}
             getRegistry={getRegistry}
           />
         </Route>
         <Route>
-          <Redirect to="/" />
+          <Redirect to="/access-requests" />
         </Route>
       </Switch>
     </Suspense>
