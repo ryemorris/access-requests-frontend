@@ -148,7 +148,6 @@ const AccessRequestsTable = ({ isInternal }) => {
   const [accountFilter, setAccountFilter] = React.useState('');
   const [filtersDirty, setFiltersDirty] = React.useState(false);
   const hasFilters = statusSelections.length > 0 || accountFilter;
-  const orgIdEnabled = useFlag('platform.chrome.tamtool.orgid');
 
   // Row loading
   const [isLoading, setIsLoading] = React.useState(true);
@@ -163,10 +162,7 @@ const AccessRequestsTable = ({ isInternal }) => {
 
     isInternal
       ? listUrl.searchParams.append('query_by', 'user_id')
-      : listUrl.searchParams.append(
-          'query_by',
-          orgIdEnabled ? 'target_org' : 'target_account'
-        );
+      : listUrl.searchParams.append('query_by', 'target_org');
 
     listUrl.searchParams.append('offset', (page - 1) * perPage);
     listUrl.searchParams.append('limit', perPage);
