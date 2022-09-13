@@ -1,7 +1,11 @@
 const plugins = require('./config/plugins.js');
 
 module.exports = {
-  appUrl: ['/internal/access-requests', '/settings/rbac/access-requests'],
+  appUrl: [
+    '/internal/access-requests',
+    '/settings/rbac/access-requests',
+    '/internal',
+  ],
   debug: true,
   useProxy: true,
   proxyVerbose: true,
@@ -13,5 +17,5 @@ module.exports = {
   /**
    * Add additional webpack plugins
    */
-  plugins: [...plugins],
+  plugins,
 };

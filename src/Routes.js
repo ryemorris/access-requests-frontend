@@ -13,53 +13,55 @@ const AccessRequestDetailsPage = lazy(() =>
 import { RegistryContext } from './store';
 const isDev = process.env.NODE_ENV !== 'production';
 
+const fallback = (
+  <Bullseye>
+    <Spinner />
+  </Bullseye>
+);
+
 export const Routes = () => {
   const { getRegistry } = useContext(RegistryContext);
+  const [userReady, setUserReady] = useState(false);
   const [isInternal, setIsInternal] = useState(true);
 
   useEffect(() => {
     insights.chrome.init();
     Promise.resolve(insights.chrome.auth.getUser()).then((user) => {
       setIsInternal(user?.identity?.user?.is_internal);
+      setUserReady(true);
     });
-  });
+  }, []);
 
-  const AccessRequestDetailsPageWrapper = () => (
-    <AccessRequestDetailsPage
-      isInternal={isInternal}
-      getRegistry={getRegistry}
-    />
-  );
-  const AccessRequestsPageWrapper = () => (
-    <AccessRequestsPage isInternal={isInternal} getRegistry={getRegistry} />
-  );
+  if (!userReady) {
+    return fallback;
+  }
 
   return (
-    <Suspense
-      fallback={
-        <Bullseye>
-          <Spinner />
-        </Bullseye>
-      }
-    >
+    <Suspense fallback={fallback}>
       {isDev && (
         <ToggleSwitch
           id="toggle-view"
           label="Internal view"
           labelOff="External view"
-          isChecked={isInternal}
-          onChange={() => setIsInternal(!isInternal)}
+          checked={isInternal}
+          onChange={() => setIsInternal((prev) => !prev)}
         />
       )}
       <Switch>
-        <Route path="/" exact component={AccessRequestsPageWrapper} />
-        <Route
-          path="/:requestId"
-          exact
-          component={AccessRequestDetailsPageWrapper}
-        />
+        <Route path="/access-requests" exact>
+          <AccessRequestsPage
+            isInternal={isInternal}
+            getRegistry={getRegistry}
+          />
+        </Route>
+        <Route path="/access-requests/:requestId">
+          <AccessRequestDetailsPage
+            isInternal={isInternal}
+            getRegistry={getRegistry}
+          />
+        </Route>
         <Route>
-          <Redirect to="/" />
+          <Redirect to="/access-requests" />
         </Route>
       </Switch>
     </Suspense>
