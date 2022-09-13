@@ -308,7 +308,7 @@ const MUARolesTable = ({
           <Tr isExpanded={row.isExpanded}>
             {!isReadOnly && <Td />}
             <Td className="pf-u-p-0" colSpan={3}>
-              <TableComposable isCompact className="pf-m-no-border-rows">
+              <TableComposable className="pf-m-no-border-rows">
                 <Thead>
                   <Tr>
                     {expandedColumns.map((col) => (
@@ -351,12 +351,12 @@ const MUARolesTable = ({
           </Tr>
         </Tbody>
       ))}
-      {pagedRows.length === 0 && hasFilters && (
+      {pagedRows.length === 0 && hasFilters ? (
         <MUANoResults
           columns={columns}
           clearFiltersButton={clearFiltersButton}
         />
-      )}
+      ) : null}
     </TableComposable>
   );
 
