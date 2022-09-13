@@ -28,7 +28,6 @@ import {
   Th,
   Td,
 } from '@patternfly/react-table';
-import { useFlag } from '@unleash/proxy-client-react';
 import CancelRequestModal from './CancelRequestModal';
 import AccessRequestsWizard from './access-requests-wizard/AccessRequestsWizard';
 import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
