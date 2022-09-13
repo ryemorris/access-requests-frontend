@@ -4,8 +4,7 @@ module.exports = {
   appUrl: [
     '/internal/access-requests',
     '/settings/rbac/access-requests',
-    '/beta/internal/access-requests',
-    '/beta/settings/rbac/access-requests',
+    '/internal',
   ],
   debug: true,
   useProxy: true,
