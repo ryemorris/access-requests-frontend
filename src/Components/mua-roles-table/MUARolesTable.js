@@ -32,7 +32,7 @@ const MUARolesTable = ({
     if (rolesCache.length === 0 || applicationsCache.length === 0) {
       apiInstance
         .get(
-          `${API_BASE}/roles/?limit=9999&order_by=display_name&add_fields=groups_in_count`,
+          `${API_BASE}/roles/?system=true&limit=9999&order_by=display_name&add_fields=groups_in_count`,
           { headers: { Accept: 'application/json' } }
         )
         .then(({ data }) => {
