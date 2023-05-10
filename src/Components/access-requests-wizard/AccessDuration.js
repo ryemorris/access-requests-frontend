@@ -84,7 +84,7 @@ const AccessDuration = () => {
     return '';
   };
 
-  const onStartChange = (str, date) => {
+  const onStartChange = (_e, str, date) => {
     setStartDate(date ? new Date(date) : undefined);
     formOptions.change(ACCESS_FROM, isCorrectFormat(str) ? str : '');
     if (isValidDate(date) && !startValidator(date)) {
@@ -94,7 +94,7 @@ const AccessDuration = () => {
     }
   };
 
-  const onEndChange = (str, date) => {
+  const onEndChange = (_e, str, date) => {
     if (endValidator(date) || !isCorrectFormat(str)) {
       formOptions.change(ACCESS_TO, '');
     } else {
