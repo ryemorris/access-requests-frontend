@@ -113,8 +113,8 @@ const AccessDuration = () => {
         <InputHelpPopover
           bodyContent={
             <div>
-              This is the org ID of the account that you would like to receive
-              read access to
+              This is the time frame you would like to be granted read access to
+              accounts.
             </div>
           }
           field="access duration"
