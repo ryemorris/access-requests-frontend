@@ -84,7 +84,7 @@ const AccessDuration = () => {
     return '';
   };
 
-  const onStartChange = (str, date) => {
+  const onStartChange = (_e, str, date) => {
     setStartDate(date ? new Date(date) : undefined);
     formOptions.change(ACCESS_FROM, isCorrectFormat(str) ? str : '');
     if (isValidDate(date) && !startValidator(date)) {
@@ -94,7 +94,7 @@ const AccessDuration = () => {
     }
   };
 
-  const onEndChange = (str, date) => {
+  const onEndChange = (_e, str, date) => {
     if (endValidator(date) || !isCorrectFormat(str)) {
       formOptions.change(ACCESS_TO, '');
     } else {
@@ -113,8 +113,8 @@ const AccessDuration = () => {
         <InputHelpPopover
           bodyContent={
             <div>
-              This is the org ID of the account that you would like to receive
-              read access to
+              This is the time frame you would like to be granted read access to
+              accounts.
             </div>
           }
           field="access duration"
