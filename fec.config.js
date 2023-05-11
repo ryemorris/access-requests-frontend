@@ -18,4 +18,5 @@ module.exports = {
    * Add additional webpack plugins
    */
   plugins,
+  _unstableHotReload: process.env.HOT === 'true',
 };
