@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,6 +20,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useDispatch, Provider } from 'react-redux';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import MUARolesTable from '../Components/mua-roles-table/MUARolesTable';
+import { RegistryContext } from '../store';
 import CancelRequestModal from '../Components/CancelRequestModal';
 import AccessRequestWizard from '../Components/access-requests-wizard/AccessRequestsWizard';
 import { getLabelProps } from '../Helpers/getLabelProps';
@@ -80,9 +81,7 @@ const BaseAccessRequestDetailsPage = ({ isInternal }) => {
         <Breadcrumb>
           <BreadcrumbItem
             render={() => (
-              <Link to={isInternal ? '/' : '/access-requests'}>
-                {!isInternal && 'Red Hat '}Access Requests
-              </Link>
+              <Link to="..">{!isInternal && 'Red Hat '}Access Requests</Link>
             )}
           />
           <BreadcrumbItem>{requestId}</BreadcrumbItem>
@@ -223,11 +222,14 @@ const BaseAccessRequestDetailsPage = ({ isInternal }) => {
 
 // This component is a federated module used in https://github.com/RedHatInsights/insights-rbac-ui
 // Try not to break RBAC.
-const AccessRequestDetailsPage = ({ getRegistry, isInternal }) => (
-  <Provider store={getRegistry().getStore()}>
-    <BaseAccessRequestDetailsPage isInternal={isInternal} />
-  </Provider>
-);
+const AccessRequestDetailsPage = (props) => {
+  const { getRegistry } = useContext(RegistryContext);
+  return (
+    <Provider store={getRegistry().getStore()}>
+      <BaseAccessRequestDetailsPage isInternal={props?.isInternal} />
+    </Provider>
+  );
+};
 
 AccessRequestDetailsPage.propTypes = {
   getRegistry: PropTypes.func,

@@ -19,4 +19,15 @@ module.exports = {
    */
   plugins,
   _unstableHotReload: process.env.HOT === 'true',
+  moduleFederation: {
+    shared: [
+      {
+        'react-router-dom': {
+          singleton: true,
+          version: '*',
+          requiredVersion: '*',
+        },
+      },
+    ],
+  },
 };
