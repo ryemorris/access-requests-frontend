@@ -1,8 +1,9 @@
 import React, { Fragment, Suspense, lazy, useMemo, useState } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { Switch as ToggleSwitch } from '@patternfly/react-core';
 import { UserData } from './Hooks/useUserData';
 import pathnames from './pathnames';
+import InvalidObject from '@redhat-cloud-services/frontend-components/InvalidObject';
 
 const AccessRequestsPage = lazy(() => import('./Routes/AccessRequestsPage'));
 const AccessRequestDetailsPage = lazy(
@@ -58,10 +59,7 @@ export const Routing = ({ userData }: { userData: UserData }) => {
       <Routes>
         {renderedRoutes}
         {/* Catch all unmatched routes */}
-        <Route
-          path="*"
-          element={() => <Navigate to={pathnames.accessRequests.link} />}
-        />
+        <Route path="*" element={<InvalidObject />} />
       </Routes>
     </Suspense>
   );

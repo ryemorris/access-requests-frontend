@@ -1,7 +1,7 @@
 const pathnames = {
   accessRequests: {
     link: '/access-requests',
-    route: '/*',
+    route: '/',
   },
   accessRequestsDetail: {
     link: '/access-requests/:requestId',
