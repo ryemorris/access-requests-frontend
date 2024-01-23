@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import NotAuthorized from '@redhat-cloud-services/frontend-components/NotAuthorized/NotAuthorized';
+import NotificationPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal/';
 import { useLocation } from 'react-router-dom';
 import { API_ERROR } from '../Redux/action-types';
 
@@ -26,7 +27,12 @@ const ErroReducerCatcher = ({ children }) => {
     return <State serviceName={name} />;
   }
 
-  return children;
+  return (
+    <Fragment>
+      <NotificationPortal />
+      {children}
+    </Fragment>
+  );
 };
 
 ErroReducerCatcher.propTypes = {

@@ -99,7 +99,7 @@ const MUARolesTable = ({
       perPage={perPage}
       page={page}
       onSetPage={(_ev, pageNumber) => setPage(pageNumber)}
-      id={'access-requests-roles-table-pagination-' + id}
+      id={`access-requests-roles-table-pagination-${id}`}
       variant={id}
       onPerPageSelect={(_ev, perPage) => {
         setPage(1);

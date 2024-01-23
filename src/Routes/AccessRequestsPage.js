@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import registry from '../store';
 import ErroReducerCatcher from '../Components/ErrorReducerCatcher';
 
-const AccessRequestsPage = ({ isInternal }) => {
+const AccessRequestsPage = (props) => {
   return (
     <Provider store={registry.getStore()}>
       <ErroReducerCatcher>
@@ -20,7 +20,7 @@ const AccessRequestsPage = ({ isInternal }) => {
           </p>
         </PageSection>
         <PageSection padding={{ default: 'noPadding' }}>
-          <AccessRequestsTable isInternal={isInternal} />
+          <AccessRequestsTable isInternal={props?.isInternal} />
         </PageSection>
       </ErroReducerCatcher>
     </Provider>

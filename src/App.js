@@ -1,40 +1,29 @@
-import React, { Fragment, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { useHistory } from 'react-router-dom';
-import { Routes } from './Routes';
-import NotificationPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
+import React, { Fragment } from 'react';
+import { Bullseye, Spinner } from '@patternfly/react-core';
 import ErroReducerCatcher from './Components/ErrorReducerCatcher';
+import useUserData from './Hooks/useUserData';
+import Routing from './Routing';
 
 import './index.css';
 
-const App = ({ basename }) => {
-  const history = useHistory();
-  useEffect(() => {
-    insights.chrome.init();
+const App = () => {
+  const userData = useUserData();
 
-    insights.chrome.identifyApp('access-requests');
-    const unregister = insights.chrome.on('APP_NAVIGATION', (event) => {
-      if (event?.domEvent?.href) {
-        history.push(event?.domEvent?.href.replace(basename), '');
-      }
-    });
-    return () => {
-      unregister();
-    };
-  }, []);
+  if (!userData.ready) {
+    return (
+      <Bullseye>
+        <Spinner />
+      </Bullseye>
+    );
+  }
 
   return (
     <Fragment>
-      <NotificationPortal />
       <ErroReducerCatcher>
-        <Routes />
+        <Routing userData={userData} />
       </ErroReducerCatcher>
     </Fragment>
   );
-};
-
-App.propTypes = {
-  basename: PropTypes.string.isRequired,
 };
 
 export default App;
