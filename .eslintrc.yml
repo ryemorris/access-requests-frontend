@@ -3,8 +3,8 @@
     "@redhat-cloud-services/eslint-config-redhat-cloud-services"
   ],
   "globals": {
-    "insights": true
-    "shallow": true
+    "insights": true,
+    "shallow": true,
     "API_BASE": true
   },
   "overrides": [
