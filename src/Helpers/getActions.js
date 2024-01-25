@@ -84,7 +84,7 @@ export function StatusLabel({ requestId, status: statusProp, hideActions }) {
       {isEditing || status === 'pending' ? (
         <React.Fragment>
           <Button
-            className="pf-u-mr-md"
+            className="pf-v5-u-mr-md"
             isDisabled={isLoading || status === 'approved'}
             variant="primary"
             onClick={() => onClick('approved')}
@@ -92,7 +92,7 @@ export function StatusLabel({ requestId, status: statusProp, hideActions }) {
             Approve
           </Button>
           <Button
-            className="pf-u-mr-md"
+            className="pf-v5-u-mr-md"
             isDisabled={isLoading || status === 'denied'}
             variant="danger"
             onClick={() => onClick('denied')}

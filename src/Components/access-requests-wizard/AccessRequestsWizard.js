@@ -13,8 +13,8 @@ import {
   ModalVariant,
   Spinner,
   Title,
-  Wizard,
 } from '@patternfly/react-core';
+import { Wizard } from '@patternfly/react-core/deprecated';
 import ExclamationCircleIcon from '@patternfly/react-icons/dist/js/icons/exclamation-circle-icon';
 import FormRenderer from '@data-driven-forms/react-form-renderer/form-renderer';
 import Pf4FormTemplate from '@data-driven-forms/pf4-component-mapper/form-template';

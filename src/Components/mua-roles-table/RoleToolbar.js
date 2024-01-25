@@ -1,22 +1,25 @@
+import React, { useReducer } from 'react';
 import {
+  capitalize,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
-  Dropdown,
-  DropdownItem,
-  DropdownToggle,
   InputGroup,
   TextInput,
   ChipGroup,
   Chip,
+  InputGroupItem,
+} from '@patternfly/react-core';
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownToggle,
+  DropdownToggleCheckbox,
   Select,
   SelectOption,
-  DropdownToggleCheckbox,
-} from '@patternfly/react-core';
-import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
-import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
+} from '@patternfly/react-core/deprecated';
+import { FilterIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
-import React, { useReducer } from 'react';
 
 const selectLabelId = 'filter-application';
 const selectPlaceholder = 'Filter by application';
@@ -96,7 +99,9 @@ const RoleToolbar = ({
                       onClick={() => onSelectAll(null, !anySelected)}
                     />,
                   ]}
-                  onToggle={(isOpen) => setActions('isBulkSelectOpen', isOpen)}
+                  onToggle={(_event, isOpen) =>
+                    setActions('isBulkSelectOpen', isOpen)
+                  }
                   isDisabled={rows.length === 0}
                 >
                   {selectedRoles.length !== 0 && (
@@ -129,31 +134,35 @@ const RoleToolbar = ({
           </ToolbarItem>
           <ToolbarItem>
             <InputGroup>
-              <Dropdown
-                isOpen={state.isDropdownOpen}
-                onSelect={(ev) => {
-                  setActions('isDropdownOpen', false);
-                  setActions('isSelectOpen', false);
-                  setActions('filterColumn', ev.target.value);
-                }}
-                toggle={
-                  <DropdownToggle
-                    onToggle={(isOpen) => setActions('isDropdownOpen', isOpen)}
-                  >
-                    <FilterIcon /> {state.filterColumn}
-                  </DropdownToggle>
-                }
-                dropdownItems={['Role name', 'Application'].map((colName) => (
-                  // Filterable columns are RequestID, AccountID, and Status
-                  <DropdownItem
-                    key={colName}
-                    value={colName}
-                    component="button"
-                  >
-                    {capitalize(colName)}
-                  </DropdownItem>
-                ))}
-              />
+              <InputGroupItem>
+                <Dropdown
+                  isOpen={state.isDropdownOpen}
+                  onSelect={(ev) => {
+                    setActions('isDropdownOpen', false);
+                    setActions('isSelectOpen', false);
+                    setActions('filterColumn', ev.target.value);
+                  }}
+                  toggle={
+                    <DropdownToggle
+                      onToggle={(_event, isOpen) =>
+                        setActions('isDropdownOpen', isOpen)
+                      }
+                    >
+                      <FilterIcon /> {state.filterColumn}
+                    </DropdownToggle>
+                  }
+                  dropdownItems={['Role name', 'Application'].map((colName) => (
+                    // Filterable columns are RequestID, AccountID, and Status
+                    <DropdownItem
+                      key={colName}
+                      value={colName}
+                      component="button"
+                    >
+                      {capitalize(colName)}
+                    </DropdownItem>
+                  ))}
+                />
+              </InputGroupItem>
               {state.filterColumn === 'Application' ? (
                 <React.Fragment>
                   <span id={selectLabelId} hidden>
@@ -163,7 +172,9 @@ const RoleToolbar = ({
                     aria-labelledby={selectLabelId}
                     variant="checkbox"
                     aria-label="Select applications"
-                    onToggle={(isOpen) => setActions('isSelectOpen', isOpen)}
+                    onToggle={(_event, isOpen) =>
+                      setActions('isSelectOpen', isOpen)
+                    }
                     onSelect={(_ev, selection) => {
                       if (appSelections.includes(selection)) {
                         setAppSelections((prev) =>
@@ -191,11 +202,10 @@ const RoleToolbar = ({
                   name="rolesSearch"
                   id="rolesSearch"
                   type="search"
-                  iconVariant="search"
                   aria-label="Search input"
                   placeholder="Filter by role name"
                   value={nameFilter}
-                  onChange={(val) => setNameFilter(val)}
+                  onChange={(_event, val) => setNameFilter(val)}
                 />
               )}
             </InputGroup>

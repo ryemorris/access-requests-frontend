@@ -1,9 +1,10 @@
 import React from 'react';
 import {
-  Title,
   EmptyState,
   EmptyStateIcon,
   EmptyStateBody,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
 import { Tbody, Tr, Td } from '@patternfly/react-table';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
@@ -14,16 +15,17 @@ const MUANoResults = ({ columns, clearFiltersButton }) => {
     <Tbody>
       <Tr>
         <Td colSpan={columns.length}>
-          <EmptyState variant="small">
-            <EmptyStateIcon icon={SearchIcon} />
-            <Title headingLevel="h2" size="lg">
-              No matching requests found
-            </Title>
+          <EmptyState variant="sm">
+            <EmptyStateHeader
+              titleText="No matching requests found"
+              icon={<EmptyStateIcon icon={SearchIcon} />}
+              headingLevel="h2"
+            />
             <EmptyStateBody>
               No results match the filter criteria. Remove all filters or clear
               all filters to show results.
             </EmptyStateBody>
-            {clearFiltersButton}
+            <EmptyStateFooter>{clearFiltersButton}</EmptyStateFooter>
           </EmptyState>
         </Td>
       </Tr>

@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  capitalize,
   Toolbar,
   ToolbarItem,
   ToolbarContent,
@@ -7,30 +8,27 @@ import {
   InputGroup,
   TextInput,
   Pagination,
-  Dropdown,
-  DropdownToggle,
-  DropdownItem,
-  Select,
-  SelectOption,
   ChipGroup,
   Chip,
   Bullseye,
   EmptyState,
   EmptyStateIcon,
   EmptyStateBody,
-  Title,
+  EmptyStateHeader,
+  EmptyStateFooter,
+  InputGroupItem,
 } from '@patternfly/react-core';
 import {
-  TableComposable,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-} from '@patternfly/react-table';
+  Dropdown,
+  DropdownToggle,
+  DropdownItem,
+  Select,
+  SelectOption,
+} from '@patternfly/react-core/deprecated';
+import { Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
+import { Table } from '@patternfly/react-table/deprecated';
 import CancelRequestModal from './CancelRequestModal';
 import AccessRequestsWizard from './access-requests-wizard/AccessRequestsWizard';
-import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/js/icons/filter-icon';
 import PlusCircleIcon from '@patternfly/react-icons/dist/js/icons/plus-circle-icon';
@@ -41,9 +39,7 @@ import { getInternalActions, StatusLabel } from '../Helpers/getActions';
 import PropTypes from 'prop-types';
 import apiInstance from '../Helpers/apiInstance';
 
-function uncapitalize(input) {
-  return input[0].toLowerCase() + input.substring(1);
-}
+const uncapitalize = (input) => input[0].toLowerCase() + input.substring(1);
 
 // https://dev.to/gabe_ragland/debouncing-with-react-hooks-jci
 function useDebounce(value, delay) {
@@ -264,18 +260,25 @@ const AccessRequestsTable = ({ isInternal }) => {
   );
   if (rows.length === 0 && !isLoading && !filtersDirty) {
     return (
-      <Bullseye style={{ height: 'auto' }} className="pf-u-mt-lg">
-        <EmptyState variant="large">
-          <EmptyStateIcon icon={PlusCircleIcon} />
-          <Title headingLevel="h3" size="lg">
-            {isInternal ? 'No access requests' : 'You have no access requests'}
-          </Title>
+      <Bullseye style={{ height: 'auto' }} className="pf-v5-u-mt-lg">
+        <EmptyState variant="lg">
+          <EmptyStateHeader
+            titleText={
+              <>
+                {isInternal
+                  ? 'No access requests'
+                  : 'You have no access requests'}
+              </>
+            }
+            icon={<EmptyStateIcon icon={PlusCircleIcon} />}
+            headingLevel="h3"
+          />
           <EmptyStateBody>
             {isInternal
               ? 'Click the button below to create an access request.'
               : 'You have no pending Red Hat access requests.'}
           </EmptyStateBody>
-          {createButton}
+          <EmptyStateFooter>{createButton}</EmptyStateFooter>
         </EmptyState>
         {modals}
       </Bullseye>
@@ -303,35 +306,37 @@ const AccessRequestsTable = ({ isInternal }) => {
       <ToolbarContent>
         <ToolbarItem>
           <InputGroup>
-            <Dropdown
-              isOpen={isDropdownOpen}
-              onSelect={(ev) => {
-                setIsDropdownOpen(false);
-                setFilterColumn(ev.target.value);
-                setIsSelectOpen(false);
-                setFiltersDirty(true);
-              }}
-              toggle={
-                <DropdownToggle
-                  onToggle={(isOpen) => setIsDropdownOpen(isOpen)}
-                >
-                  <FilterIcon /> {filterColumn}
-                </DropdownToggle>
-              }
-              // https://marvelapp.com/prototype/257je526/screen/74764732
-              dropdownItems={(isInternal ? [1, 5] : [6])
-                .map((i) => columns[i])
-                .map((colName) => (
-                  // Filterable columns are RequestID, AccountID, and Status
-                  <DropdownItem
-                    key={colName}
-                    value={colName}
-                    component="button"
+            <InputGroupItem>
+              <Dropdown
+                isOpen={isDropdownOpen}
+                onSelect={(ev) => {
+                  setIsDropdownOpen(false);
+                  setFilterColumn(ev.target.value);
+                  setIsSelectOpen(false);
+                  setFiltersDirty(true);
+                }}
+                toggle={
+                  <DropdownToggle
+                    onToggle={(_event, isOpen) => setIsDropdownOpen(isOpen)}
                   >
-                    {capitalize(colName)}
-                  </DropdownItem>
-                ))}
-            />
+                    <FilterIcon /> {filterColumn}
+                  </DropdownToggle>
+                }
+                // https://marvelapp.com/prototype/257je526/screen/74764732
+                dropdownItems={(isInternal ? [1, 5] : [6])
+                  .map((i) => columns[i])
+                  .map((colName) => (
+                    // Filterable columns are RequestID, AccountID, and Status
+                    <DropdownItem
+                      key={colName}
+                      value={colName}
+                      component="button"
+                    >
+                      {capitalize(colName)}
+                    </DropdownItem>
+                  ))}
+              />
+            </InputGroupItem>
             {['Status', 'Decision'].includes(filterColumn) && (
               <React.Fragment>
                 <span id={selectLabelId} hidden>
@@ -341,7 +346,7 @@ const AccessRequestsTable = ({ isInternal }) => {
                   aria-labelledby={selectLabelId}
                   variant="checkbox"
                   aria-label="Select statuses"
-                  onToggle={(isOpen) => setIsSelectOpen(isOpen)}
+                  onToggle={(_event, isOpen) => setIsSelectOpen(isOpen)}
                   onSelect={(_ev, selection) => {
                     setFiltersDirty(true);
                     if (statusSelections.includes(selection)) {
@@ -375,11 +380,10 @@ const AccessRequestsTable = ({ isInternal }) => {
                   name={`${filterColumn}-filter`}
                   id={`${filterColumn}-filter`}
                   type="search"
-                  iconVariant="search"
                   placeholder={`Filter by ${uncapitalize(filterColumn)}`}
                   aria-label={`${filterColumn} search input`}
                   value={accountFilter}
-                  onChange={(val) => {
+                  onChange={(_event, val) => {
                     setAccountFilter(val), setFiltersDirty(true), setPage(1);
                   }}
                 />
@@ -431,7 +435,7 @@ const AccessRequestsTable = ({ isInternal }) => {
     return [0, 6].includes(columnIndex) ? 20 : 10;
   }
   const table = (
-    <TableComposable aria-label="Access requests table" variant="compact">
+    <Table aria-label="Access requests table" variant="compact">
       <Thead>
         <Tr>
           {columns.map((column, columnIndex) => (
@@ -515,23 +519,24 @@ const AccessRequestsTable = ({ isInternal }) => {
           <Tr>
             <Td colSpan={columns.length}>
               <div>
-                <EmptyState variant="small">
-                  <EmptyStateIcon icon={SearchIcon} />
-                  <Title headingLevel="h2" size="lg">
-                    No matching requests found
-                  </Title>
+                <EmptyState variant="sm">
+                  <EmptyStateHeader
+                    titleText="No matching requests found"
+                    icon={<EmptyStateIcon icon={SearchIcon} />}
+                    headingLevel="h2"
+                  />
                   <EmptyStateBody>
                     No results match the filter criteria. Remove all filters or
                     clear all filters to show results.
                   </EmptyStateBody>
-                  {clearFiltersButton}
+                  <EmptyStateFooter>{clearFiltersButton}</EmptyStateFooter>
                 </EmptyState>
               </div>
             </Td>
           </Tr>
         ) : null}
       </Tbody>
-    </TableComposable>
+    </Table>
   );
 
   return (

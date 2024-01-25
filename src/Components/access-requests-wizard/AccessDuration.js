@@ -150,7 +150,7 @@ const AccessDuration = () => {
             </HelperText>
           ) : null}
         </SplitItem>
-        <SplitItem className="pf-u-mt-sm">to</SplitItem>
+        <SplitItem className="pf-v5-u-mt-sm">to</SplitItem>
         <SplitItem>
           <DatePicker
             aria-label="End date"

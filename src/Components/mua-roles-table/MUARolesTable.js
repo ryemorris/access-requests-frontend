@@ -1,13 +1,14 @@
 import React from 'react';
 import { Title, Button, Pagination, Tooltip } from '@patternfly/react-core';
 import {
-  TableComposable,
   Thead,
   Tbody,
   Tr,
   Th,
   Td,
+  TableVariant,
 } from '@patternfly/react-table';
+import { Table } from '@patternfly/react-table/deprecated';
 import { css } from '@patternfly/react-styles';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
@@ -205,7 +206,7 @@ const MUARolesTable = ({
     }
   };
   const roleTable = (
-    <TableComposable aria-label="My user access roles" variant="compact">
+    <Table aria-label="My user access roles" variant={TableVariant.compact}>
       <Thead>
         <Tr>
           {!isReadOnly && <Th />}
@@ -282,9 +283,9 @@ const MUARolesTable = ({
               />
             )}
             <Td dataLabel={columns[0]}>{row.display_name}</Td>
-            <Td dataLabel={columns[1]} className="pf-m-truncate">
+            <Td dataLabel={columns[1]} className="pf-v5-m-truncate">
               <Tooltip entryDelay={1000} content={row.description}>
-                <span className="pf-m-truncate pf-c-table__text">
+                <span className="pf-v5-m-truncate pf-v5-c-table__text">
                   {row.description}
                 </span>
               </Tooltip>
@@ -293,12 +294,12 @@ const MUARolesTable = ({
               dataLabel={columns[2]}
               className={css(
                 'pf-c-table__compound-expansion-toggle',
-                row.isExpanded && 'pf-m-expanded'
+                row.isExpanded && 'pf-v5-m-expanded'
               )}
             >
               <button
                 type="button"
-                className="pf-c-table__button"
+                className="pf-v5-c-table__button"
                 onClick={() => onExpand(row)}
               >
                 {row.permissions}
@@ -307,8 +308,8 @@ const MUARolesTable = ({
           </Tr>
           <Tr isExpanded={row.isExpanded}>
             {!isReadOnly && <Td />}
-            <Td className="pf-u-p-0" colSpan={3}>
-              <TableComposable className="pf-m-no-border-rows">
+            <Td className="pf-v5-u-p-0" colSpan={3}>
+              <Table className="pf-v5-m-no-border-rows">
                 <Thead>
                   <Tr>
                     {expandedColumns.map((col) => (
@@ -346,7 +347,7 @@ const MUARolesTable = ({
                         </Tr>
                       ))}
                 </Tbody>
-              </TableComposable>
+              </Table>
             </Td>
           </Tr>
         </Tbody>
@@ -357,7 +358,7 @@ const MUARolesTable = ({
           clearFiltersButton={clearFiltersButton}
         />
       ) : null}
-    </TableComposable>
+    </Table>
   );
 
   return (
