@@ -322,7 +322,6 @@ const AccessRequestsTable = ({ isInternal }) => {
                     <FilterIcon /> {filterColumn}
                   </DropdownToggle>
                 }
-                // https://marvelapp.com/prototype/257je526/screen/74764732
                 dropdownItems={(isInternal ? [1, 5] : [6])
                   .map((i) => columns[i])
                   .map((colName) => (

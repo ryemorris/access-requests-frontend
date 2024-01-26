@@ -24,7 +24,6 @@ export function getInternalActions(status, requestId, setOpenModal) {
   return { items, disable: items.length === 0 };
 }
 
-// https://marvelapp.com/prototype/257je526/screen/74764732
 export function StatusLabel({ requestId, status: statusProp, hideActions }) {
   const [status, setStatus] = React.useState(statusProp);
   const [isEditing, setIsEditing] = React.useState(false);
