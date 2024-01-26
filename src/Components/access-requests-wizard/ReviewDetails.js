@@ -24,7 +24,7 @@ const ReviewDetails = () => {
   return (
     <React.Fragment>
       <Stack className="accessRequests">
-        <StackItem className="pf-u-mb-md">
+        <StackItem className="pf-v5-u-mb-md">
           <Grid>
             <GridItem sm={12} md={2}>
               <Text
@@ -61,7 +61,7 @@ const ReviewDetails = () => {
             </GridItem>
           </Grid>
         </StackItem>
-        <StackItem className="pf-u-mb-md">
+        <StackItem className="pf-v5-u-mb-md">
           <Grid>
             <GridItem sm={12} md={2}>
               <Text component={TextVariants.h4}>To</Text>

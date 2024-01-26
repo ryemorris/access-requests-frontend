@@ -1,9 +1,13 @@
-import React, { Fragment, Suspense, lazy, useMemo, useState } from 'react';
+import React, { Suspense, lazy, useMemo, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { Switch as ToggleSwitch } from '@patternfly/react-core';
+import {
+  Bullseye,
+  Spinner,
+  Switch as ToggleSwitch,
+} from '@patternfly/react-core';
 import { UserData } from './Hooks/useUserData';
+import InvalidObject from '@patternfly/react-component-groups/dist/dynamic/InvalidObject';
 import pathnames from './pathnames';
-import InvalidObject from '@redhat-cloud-services/frontend-components/InvalidObject';
 
 const AccessRequestsPage = lazy(() => import('./Routes/AccessRequestsPage'));
 const AccessRequestDetailsPage = lazy(
@@ -45,10 +49,16 @@ export const Routing = ({ userData }: { userData: UserData }) => {
   const renderedRoutes = useMemo(() => renderRoutes(routes), [routes]);
 
   return (
-    <Suspense fallback={Fragment}>
+    <Suspense
+      fallback={
+        <Bullseye>
+          <Spinner size="xl" />
+        </Bullseye>
+      }
+    >
       {isDev && (
         <ToggleSwitch
-          className="pf-u-p-sm"
+          className="pf-v5-u-p-sm"
           id="toggle-view"
           label="Internal view"
           labelOff="External view"

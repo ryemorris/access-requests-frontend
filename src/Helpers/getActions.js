@@ -24,7 +24,6 @@ export function getInternalActions(status, requestId, setOpenModal) {
   return { items, disable: items.length === 0 };
 }
 
-// https://marvelapp.com/prototype/257je526/screen/74764732
 export function StatusLabel({ requestId, status: statusProp, hideActions }) {
   const [status, setStatus] = React.useState(statusProp);
   const [isEditing, setIsEditing] = React.useState(false);
@@ -84,7 +83,7 @@ export function StatusLabel({ requestId, status: statusProp, hideActions }) {
       {isEditing || status === 'pending' ? (
         <React.Fragment>
           <Button
-            className="pf-u-mr-md"
+            className="pf-v5-u-mr-md"
             isDisabled={isLoading || status === 'approved'}
             variant="primary"
             onClick={() => onClick('approved')}
@@ -92,7 +91,7 @@ export function StatusLabel({ requestId, status: statusProp, hideActions }) {
             Approve
           </Button>
           <Button
-            className="pf-u-mr-md"
+            className="pf-v5-u-mr-md"
             isDisabled={isLoading || status === 'denied'}
             variant="danger"
             onClick={() => onClick('denied')}

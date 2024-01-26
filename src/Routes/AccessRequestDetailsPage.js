@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import {
+  capitalize,
   Breadcrumb,
   BreadcrumbItem,
   PageSection,
@@ -11,11 +12,12 @@ import {
   FlexItem,
   Spinner,
   Label,
+} from '@patternfly/react-core';
+import {
   Dropdown,
   DropdownItem,
   KebabToggle,
-} from '@patternfly/react-core';
-import { capitalize } from '@patternfly/react-core/dist/esm/helpers/util';
+} from '@patternfly/react-core/deprecated';
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, Provider } from 'react-redux';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
@@ -88,7 +90,7 @@ const BaseAccessRequestDetailsPage = ({ isInternal }) => {
         </Breadcrumb>
         <Flex direction={{ default: 'column', md: 'row' }}>
           <FlexItem grow={{ default: 'grow' }}>
-            <Title headingLevel="h1" size="2xl" className="pf-u-pt-md">
+            <Title headingLevel="h1" size="2xl" className="pf-v5-u-pt-md">
               {requestId}
             </Title>
           </FlexItem>
@@ -139,7 +141,7 @@ const BaseAccessRequestDetailsPage = ({ isInternal }) => {
                   <Spinner size="xl" />
                 ) : (
                   <React.Fragment>
-                    <div className="pf-u-pb-md">
+                    <div className="pf-v5-u-pb-md">
                       {isInternal ? (
                         <div>
                           <label>
@@ -147,7 +149,7 @@ const BaseAccessRequestDetailsPage = ({ isInternal }) => {
                           </label>
                           <br />
                           <Label
-                            className="pf-u-mt-sm"
+                            className="pf-v5-u-mt-sm"
                             {...getLabelProps(request.status)}
                           >
                             {capitalize(request.status)}
@@ -167,7 +169,7 @@ const BaseAccessRequestDetailsPage = ({ isInternal }) => {
                       )}
                     </div>
                     {requestDisplayProps.map((prop, key) => (
-                      <div className="pf-u-pb-md" key={key}>
+                      <div className="pf-v5-u-pb-md" key={key}>
                         <label>
                           <b>
                             {capitalize(

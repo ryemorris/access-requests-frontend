@@ -11,7 +11,7 @@ const AccessRequestsPage = (props) => {
     <Provider store={registry.getStore()}>
       <ErroReducerCatcher>
         <PageSection variant="light">
-          <Title headingLevel="h1" className="pf-u-pb-sm">
+          <Title headingLevel="h1" className="pf-v5-u-pb-sm">
             Access Requests
           </Title>
           <p>
