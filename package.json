@@ -15,7 +15,8 @@
     "travis:verify": "npm-run-all travis:build lint test",
     "deploy": "npm-run-all build lint test",
     "nightly": "npm run travis:verify",
-    "postinstall": "ts-patch install"
+    "postinstall": "ts-patch install",
+    "verify": "npm-run-all build lint test"
   },
   "dependencies": {
     "@babel/runtime": "7.23.8",
