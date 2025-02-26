@@ -43,7 +43,7 @@
     "@babel/preset-env": "^7.23.8",
     "@babel/preset-react": "^7.23.3",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^2.0.3",
-    "@redhat-cloud-services/frontend-components-config": "^6.3.3",
+    "@redhat-cloud-services/frontend-components-config": "^6.4.5",
     "@redhat-cloud-services/tsc-transform-imports": "^1.0.6",
     "@testing-library/react": "^14.1.2",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
