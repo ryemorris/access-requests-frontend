@@ -34,6 +34,8 @@ spec:
       npm install
       npm run lint
       npm test --  --runInBand --no-cache
+  pipelineRef:
+    name: docker-build
   taskRunTemplate:
     serviceAccountName: build-pipeline-access-requests-frontend
   workspaces:
