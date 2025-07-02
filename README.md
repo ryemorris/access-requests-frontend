@@ -6,6 +6,18 @@ Since most components are only slightly tweaked between the requester (aka inter
 
 The list and details pages are exported as federated modules for use in [rbac-ui.](https://github.com/RedHatInsights/insights-rbac-ui)
 
+## Storybook
+
+Interactive component documentation and stories are available on Chromatic:
+
+- **Master branch**: https://master--686501da56bb357ec8c2a222.chromatic.com
+- **Feature branches**: https://`<branch-name>`--686501da56bb357ec8c2a222.chromatic.com
+
+Stories are automatically deployed on:
+- ✅ Pushes to `master`
+- ✅ Pull requests from [@RedHatInsights/experience-ui-committers](https://github.com/orgs/RedHatInsights/teams/experience-ui-committers) team members
+- ✅ Pull requests from RedHatInsights organization admins
+
 ## Developing
 
 1. `npm install`
