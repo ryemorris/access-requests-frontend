@@ -11,6 +11,11 @@ on:
     branches:
       - master
 
+# Add standard permissions for the workflow
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   # Job for push events to master
   chromatic-deployment-push:
@@ -38,57 +43,45 @@ jobs:
           buildScriptName: build-storybook
           exitZeroOnChanges: true
 
-  # Job to check if user is a team member for PRs
+  # Job to check if user has repository access (simpler approach)
   check-permissions:
     if: github.event_name == 'pull_request_target'
     runs-on: ubuntu-latest
     outputs:
-      is-team-member: ${{ steps.check-membership.outputs.is-member }}
+      has-access: ${{ steps.check-access.outputs.has-access }}
     steps:
-      - name: Check team membership
-        id: check-membership
+      - name: Check repository access
+        id: check-access
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             try {
-              // Check organization membership first
-              const orgMembership = await github.rest.orgs.getMembershipForUser({
-                org: 'RedHatInsights',
+              // Simple approach: check if user has write access to the repository
+              // This works for organization members with appropriate permissions
+              const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
                 username: context.payload.pull_request.user.login
               });
               
-              // If user is an organization admin, allow access
-              if (orgMembership.data.role === 'admin') {
-                core.setOutput('is-member', true);
-                core.info(`User ${context.payload.pull_request.user.login} is an organization admin`);
-                return;
-              }
+              const hasAccess = ['write', 'admin', 'maintain'].includes(permission.permission);
+              core.setOutput('has-access', hasAccess);
               
-              // Check team membership
-              const teamMembership = await github.rest.teams.getMembershipForUserInOrg({
-                org: 'RedHatInsights',
-                team_slug: 'experience-ui-committers',
-                username: context.payload.pull_request.user.login
-              });
-              
-              // Check if user is a team member or maintainer
-              const isMember = teamMembership.data.state === 'active' && (teamMembership.data.role === 'member' || teamMembership.data.role === 'maintainer');
-              core.setOutput('is-member', isMember);
-              
-              if (isMember) {
-                core.info(`User ${context.payload.pull_request.user.login} is a team member`);
+              if (hasAccess) {
+                core.info(`User ${context.payload.pull_request.user.login} has ${permission.permission} access to the repository`);
               } else {
-                core.info(`User ${context.payload.pull_request.user.login} is not a team member`);
+                core.info(`User ${context.payload.pull_request.user.login} has ${permission.permission} access - not sufficient for Chromatic deployment`);
               }
             } catch (error) {
-              core.info(`Error checking membership: ${error.message}`);
-              core.setOutput('is-member', false);
+              // If we can't check permissions, assume no access for security
+              core.info(`Error checking permissions: ${error.message}`);
+              core.setOutput('has-access', false);
             }
 
-  # Job for PR events from team members
+  # Job for PR events from users with repository access
   chromatic-deployment-pr:
-    if: github.event_name == 'pull_request_target' && needs.check-permissions.outputs.is-team-member == 'true'
+    if: github.event_name == 'pull_request_target' && needs.check-permissions.outputs.has-access == 'true'
     runs-on: ubuntu-latest
     needs: [check-permissions]
     steps:
