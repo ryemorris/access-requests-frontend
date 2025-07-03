@@ -25,6 +25,7 @@ export interface MUARole {
   isExpanded: boolean;
   access?: string[][]; // Array of [application, resource, operation] tuples
   groups_in_count?: number;
+
   [key: string]: any;
 }
 
@@ -41,7 +42,7 @@ interface UseMUATableDataReturn {
   fetchRolePermissions: (role: MUARole) => Promise<void>;
 }
 
-export const useMUATableData = (): UseMUATableDataReturn => {
+export const useMUATableRolesData = (): UseMUATableDataReturn => {
   const [rows, setRows] = React.useState<MUARole[]>(Array.from(rolesCache));
   const [applications, setApplications] =
     React.useState<string[]>(applicationsCache);

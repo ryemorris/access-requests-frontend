@@ -18,6 +18,7 @@ interface User {
   first_name: string;
   last_name: string;
   username: string;
+
   [key: string]: any;
 }
 
@@ -28,6 +29,7 @@ interface RequestDetails {
   end_date: string;
   roles: Array<{ display_name: string; [key: string]: any }>;
   errors?: Array<{ detail: string }>;
+
   [key: string]: any;
 }
 
@@ -42,6 +44,7 @@ interface FormValues {
   [ACCESS_FROM]: string;
   [ACCESS_TO]: string;
   [SELECTED_ROLES]: string[];
+
   [key: string]: any;
 }
 

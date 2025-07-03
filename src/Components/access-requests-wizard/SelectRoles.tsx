@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import MUARolesTable from '../mua-roles-table/MUARolesTable';
 import { SELECTED_ROLES } from './schema';
@@ -20,7 +20,7 @@ const SelectRoles: React.FC<SelectRolesProps> = (props) => {
 
   useEffect(() => {
     onChange(selectedRoles);
-  }, [selectedRoles, onChange]);
+  }, [selectedRoles]);
 
   return (
     <FormGroup fieldId="select-role">

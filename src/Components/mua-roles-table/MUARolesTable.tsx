@@ -1,27 +1,28 @@
 import React from 'react';
-import { Title, Button, Pagination, Tooltip } from '@patternfly/react-core';
+import { Button, Pagination, Title, Tooltip } from '@patternfly/react-core';
 import {
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   TableVariant,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
 } from '@patternfly/react-table';
 import { Table } from '@patternfly/react-table/deprecated';
 import { css } from '@patternfly/react-styles';
 import RoleToolbar from './RoleToolbar';
 import MUANoResults from './MUANoResults';
-import { useMUATableData } from './hooks/useMUATableData';
+import { useMUATableRolesData } from './hooks/useMUATableRolesData';
 import { useMUATableSorting } from './hooks/useMUATableSorting';
 import { useMUATableFiltering } from './hooks/useMUATableFiltering';
 import { useMUATablePagination } from './hooks/useMUATablePagination';
-import { useMUATableSelection } from './hooks/useMUATableSelection';
+import { useMUATableRolesSelection } from './hooks/useMUATableRolesSelection';
 import { useMUATableExpansion } from './hooks/useMUATableExpansion';
 import { useRoleToolbar } from './hooks/useRoleToolbar';
 
 interface SelectedRole {
   display_name: string;
+
   [key: string]: any;
 }
 
@@ -36,6 +37,7 @@ export interface MUARole {
   isExpanded: boolean;
   access?: string[][]; // Array of [application, resource, operation] tuples
   groups_in_count?: number;
+
   [key: string]: any;
 }
 
@@ -416,7 +418,7 @@ export function MUARolesTableView({
 
 const MUARolesTable: React.FC<MUARolesTableProps> = ({
   roles: selectedRoles,
-  setRoles: setSelectedRoles,
+  setRoles: setSelectedRoles = () => {},
 }) => {
   const isReadOnly = setSelectedRoles === undefined;
 
@@ -429,7 +431,7 @@ const MUARolesTable: React.FC<MUARolesTableProps> = ({
 
   // Data management
   const { rows, setRows, applications, error, fetchRolePermissions } =
-    useMUATableData();
+    useMUATableRolesData();
 
   // Filtering
   const {
@@ -459,10 +461,10 @@ const MUARolesTable: React.FC<MUARolesTableProps> = ({
     });
 
   // Selection (only used in editable mode)
-  const selectionProps = useMUATableSelection({
+  const selectionProps = useMUATableRolesSelection({
     selectedRoles: normalizedSelectedRoles,
-    setSelectedRoles: setSelectedRoles || (() => {}),
-    filteredRows,
+    setSelectedRoles: setSelectedRoles,
+    sortedRows,
   });
 
   // Row expansion
@@ -474,7 +476,7 @@ const MUARolesTable: React.FC<MUARolesTableProps> = ({
 
   // Role toolbar functionality
   const { onSelectAll } = useRoleToolbar({
-    setSelectedRoles: setSelectedRoles || (() => {}),
+    setSelectedRoles: setSelectedRoles,
     filteredRows,
     columns: ['Role name', 'Role description', 'Permissions'],
     appSelections,
@@ -509,7 +511,7 @@ const MUARolesTable: React.FC<MUARolesTableProps> = ({
       onPerPageSelect={onPerPageSelect}
       setNameFilter={setNameFilter}
       setAppSelections={setAppSelections}
-      setSelectedRoles={setSelectedRoles || (() => {})}
+      setSelectedRoles={setSelectedRoles}
       clearFilters={clearFilters}
       onSelectAll={onSelectAll}
     />
