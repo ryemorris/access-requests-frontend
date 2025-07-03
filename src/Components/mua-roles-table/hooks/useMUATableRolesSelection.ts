@@ -1,13 +1,13 @@
 import React from 'react';
-import { MUARole } from './useMUATableData';
+import { MUARole } from './useMUATableRolesData';
 
-interface UseMUATableSelectionProps {
+interface UseMUATableRolesSelectionProps {
   selectedRoles: string[];
   setSelectedRoles: (roles: string[]) => void;
-  filteredRows: MUARole[];
+  sortedRows: MUARole[];
 }
 
-interface UseMUATableSelectionReturn {
+interface UseMUATableRolesSelectionReturn {
   anySelected: boolean;
   someChecked: boolean | null;
   isChecked: boolean | null;
@@ -15,11 +15,11 @@ interface UseMUATableSelectionReturn {
   getIsRowSelected: (rowName: string) => boolean;
 }
 
-export const useMUATableSelection = ({
+export const useMUATableRolesSelection = ({
   selectedRoles,
   setSelectedRoles,
-  filteredRows,
-}: UseMUATableSelectionProps): UseMUATableSelectionReturn => {
+  sortedRows,
+}: UseMUATableRolesSelectionProps): UseMUATableRolesSelectionReturn => {
   const anySelected = React.useMemo(() => {
     return selectedRoles.length > 0;
   }, [selectedRoles.length]);
@@ -29,16 +29,17 @@ export const useMUATableSelection = ({
   }, [anySelected]);
 
   const isChecked = React.useMemo(() => {
-    return selectedRoles.length === filteredRows.length &&
+    return selectedRoles.length === sortedRows.length &&
       selectedRoles.length > 0
       ? true
       : someChecked;
-  }, [selectedRoles.length, filteredRows.length, someChecked]);
+  }, [selectedRoles.length, sortedRows.length, someChecked]);
 
   const onSelect = React.useCallback(
     (_event: any, isSelectedState: boolean, rowId: number) => {
       // Get the role name from the current page of data
-      const roleName = filteredRows[rowId]?.display_name;
+      const roleName = sortedRows[rowId]?.display_name;
+      console.log({ rowId, selectedRoles, filteredRows: sortedRows });
 
       if (!roleName) {
         return;
@@ -54,7 +55,7 @@ export const useMUATableSelection = ({
         setSelectedRoles(selectedRoles.filter((role) => role !== roleName));
       }
     },
-    [selectedRoles, setSelectedRoles, filteredRows]
+    [selectedRoles, setSelectedRoles, sortedRows]
   );
 
   const getIsRowSelected = React.useCallback(

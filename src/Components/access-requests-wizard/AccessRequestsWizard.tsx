@@ -22,10 +22,11 @@ import AccessDuration from './AccessDuration';
 import SetName from './SetName';
 import schemaBuilder from './schema';
 import { useAccessRequestWizard } from './hooks/useAccessRequestWizard';
+import FormTemplateCommonProps from '@data-driven-forms/common/form-template';
 
 const invalidAccountTitle = 'Invalid Account number';
 
-const FormTemplate: React.FC<any> = (props) => (
+const FormTemplate: React.FC<FormTemplateCommonProps> = (props) => (
   <Pf4FormTemplate {...props} showFormControls={false} />
 );
 
@@ -188,6 +189,8 @@ const AccessRequestsWizard: React.FC<AccessRequestsWizardProps> = ({
     );
   }
 
+  const { first_name, last_name } = user || {};
+
   // Main form renderer
   return (
     <FormRenderer
@@ -199,8 +202,9 @@ const AccessRequestsWizard: React.FC<AccessRequestsWizardProps> = ({
       onSubmit={onSubmit}
       initialValues={{
         ...initialValues,
-        'first-name': user?.first_name,
-        'last-name': user?.last_name,
+        'first-name': first_name,
+        'last-name': last_name,
+        name: first_name && last_name ? `${first_name} ${last_name}` : '',
       }}
       onCancel={onCancel}
     />

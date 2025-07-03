@@ -1,6 +1,4 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { BrowserRouter } from 'react-router-dom';
 import { http, HttpResponse } from 'msw';
 import { AccessRequestDetailsPageView } from './AccessRequestDetailsPage';
 
@@ -108,22 +106,6 @@ AccessRequestDetailsPageView is the complete page layout component for viewing a
       ],
     },
   },
-  decorators: [
-    (Story) => {
-      // Mock global API_BASE for Storybook environment
-      if (typeof window !== 'undefined') {
-        (window as any).API_BASE = '/api/rbac/v1';
-      }
-
-      return (
-        <BrowserRouter>
-          <div style={{ minHeight: '100vh', backgroundColor: '#f0f0f0' }}>
-            <Story />
-          </div>
-        </BrowserRouter>
-      );
-    },
-  ],
   argTypes: {
     isInternal: {
       control: 'boolean',

@@ -3,20 +3,20 @@ import path from 'path';
 
 const config: StorybookConfig = {
   stories: [
-    "../src/**/*.mdx",
-    "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"
+    '../src/**/*.mdx',
+    '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'
   ],
   addons: [
-    "@storybook/addon-webpack5-compiler-swc",
-    "@storybook/addon-docs",
-    "@storybook/addon-essentials",
+    '@storybook/addon-webpack5-compiler-swc',
+    '@storybook/addon-docs',
+    'storybook-addon-mock-date'
   ],
   framework: {
-    name: "@storybook/react-webpack5",
+    name: '@storybook/react-webpack5',
     options: {}
   },
   docs: {
-    defaultName: 'Documentation',
+    defaultName: 'Documentation'
   },
   staticDirs: ['../static'],
   webpackFinal: async (config) => {
@@ -26,8 +26,8 @@ const config: StorybookConfig = {
       alias: {
         ...config.resolve?.alias,
         '@redhat-cloud-services/frontend-components/useChrome': path.resolve(__dirname, './useChrome'),
-        '@unleash/proxy-client-react': path.resolve(__dirname, './useUnleash'),
-      },
+        '@unleash/proxy-client-react': path.resolve(__dirname, './useUnleash')
+      }
     };
 
     // Add SCSS support
@@ -40,10 +40,9 @@ const config: StorybookConfig = {
       use: [
         'style-loader',
         'css-loader',
-        'sass-loader',
-      ],
+        'sass-loader'
+      ]
     });
-
 
 
     return config;
@@ -53,9 +52,9 @@ const config: StorybookConfig = {
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
       shouldExtractLiteralValuesFromEnum: true,
-      propFilter: (prop) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
-    },
-  },
+      propFilter: (prop) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true)
+    }
+  }
 };
 
 export default config;

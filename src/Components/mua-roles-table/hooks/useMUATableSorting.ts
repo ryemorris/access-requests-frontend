@@ -1,5 +1,5 @@
 import React from 'react';
-import { MUARole } from './useMUATableData';
+import { MUARole } from './useMUATableRolesData';
 
 export type SortDirection = 'asc' | 'desc';
 export type SortableField = 'name' | 'description' | 'permissions';

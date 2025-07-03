@@ -61,7 +61,6 @@ const AccessDuration: React.FC = () => {
               onBlur: onStartBlur,
               validated: ValidatedOptions.default,
             }}
-            appendTo={() => document.body}
           />
         </SplitItem>
         <SplitItem className="pf-v5-u-mt-sm">to</SplitItem>
@@ -78,7 +77,6 @@ const AccessDuration: React.FC = () => {
               onBlur: onEndBlur,
               validated: ValidatedOptions.default,
             }}
-            appendTo={() => document.body!}
           />
         </SplitItem>
       </Split>

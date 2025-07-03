@@ -4,14 +4,10 @@ import '@patternfly/patternfly/patternfly-addons.css';
 import React from 'react';
 import { Provider } from 'react-redux';
 import registry, { RegistryContext } from '../src/store';
-import {
-  ChromeProvider,
-  FeatureFlagsProvider,
-  type ChromeConfig,
-  type FeatureFlagsConfig
-} from './providers';
+import { type ChromeConfig, ChromeProvider, type FeatureFlagsConfig, FeatureFlagsProvider } from './providers';
 // Import MSW
 import { initialize, mswLoader } from 'msw-storybook-addon';
+import { MemoryRouter } from 'react-router-dom';
 
 // Initialize MSW
 initialize();
@@ -34,7 +30,8 @@ const preview: Preview = {
     },
     featureFlags: {
       'platform.rbac.itless': false
-    }
+    },
+    mockingDate: new Date(2024, 3, 12)
   },
   decorators: [
     // 👇 Combined context decorator - reads from story parameters and args
@@ -53,17 +50,24 @@ const preview: Preview = {
         ...(args['platform.rbac.itless'] !== undefined && { 'platform.rbac.itless': args['platform.rbac.itless'] })
       };
 
-      return (
-        <ChromeProvider value={chromeConfig}>
-          <FeatureFlagsProvider value={featureFlags}>
-            <RegistryContext.Provider value={{ getRegistry: () => registry }}>
-              <Provider store={registry.getStore()}>
+      // Mock global API_BASE for Storybook environment
+      if (typeof window !== 'undefined') {
+        (window as any).API_BASE = '/api/rbac/v1';
+      }
 
-                <Story />
-              </Provider>
-            </RegistryContext.Provider>
-          </FeatureFlagsProvider>
-        </ChromeProvider>
+      return (
+        <MemoryRouter>
+          <ChromeProvider value={chromeConfig}>
+            <FeatureFlagsProvider value={featureFlags}>
+              <RegistryContext.Provider value={{ getRegistry: () => registry }}>
+                <Provider store={registry.getStore()}>
+
+                  <Story />
+                </Provider>
+              </RegistryContext.Provider>
+            </FeatureFlagsProvider>
+          </ChromeProvider>
+        </MemoryRouter>
       );
     }
   ],
