@@ -1,31 +1,31 @@
 import React from 'react';
 import {
-  capitalize,
-  Toolbar,
-  ToolbarItem,
-  ToolbarContent,
-  Button,
-  InputGroup,
-  TextInput,
-  Pagination,
-  ChipGroup,
-  Chip,
   Bullseye,
+  Button,
+  capitalize,
+  Chip,
+  ChipGroup,
   EmptyState,
-  EmptyStateIcon,
   EmptyStateBody,
-  EmptyStateHeader,
   EmptyStateFooter,
+  EmptyStateHeader,
+  EmptyStateIcon,
+  InputGroup,
   InputGroupItem,
+  Pagination,
+  TextInput,
+  Toolbar,
+  ToolbarContent,
+  ToolbarItem,
 } from '@patternfly/react-core';
 import {
   Dropdown,
-  DropdownToggle,
   DropdownItem,
+  DropdownToggle,
   Select,
   SelectOption,
 } from '@patternfly/react-core/deprecated';
-import { Thead, Tbody, Tr, Th, Td } from '@patternfly/react-table';
+import { Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { Table } from '@patternfly/react-table/deprecated';
 import CancelRequestModal from './CancelRequestModal';
 import AccessRequestsWizard from './access-requests-wizard/AccessRequestsWizard';
@@ -182,25 +182,6 @@ const AccessRequestsTable: React.FC<AccessRequestsTableProps> = ({
     },
     [fetchAccessRequests]
   );
-
-  // Pagination component
-  const AccessRequestsPagination: React.FC<{ id: string }> = React.memo(
-    ({ id }) => (
-      <AccessRequestsPaginationView
-        itemCount={numRows}
-        perPage={perPage}
-        page={page}
-        onSetPage={setPage}
-        onPerPageSelect={(newPerPage: number) => {
-          setPage(1);
-          setPerPage(newPerPage);
-        }}
-        id={id}
-        isCompact={id === 'top'}
-      />
-    )
-  );
-  AccessRequestsPagination.displayName = 'AccessRequestsPagination';
 
   // Create button for internal users
   const createButton = isInternal && (
@@ -378,7 +359,18 @@ const AccessRequestsTable: React.FC<AccessRequestsTableProps> = ({
         </ToolbarItem>
         <ToolbarItem>{createButton}</ToolbarItem>
         <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
-          <AccessRequestsPagination id="top" />
+          <AccessRequestsPaginationView
+            itemCount={numRows}
+            perPage={perPage}
+            page={page}
+            onSetPage={setPage}
+            onPerPageSelect={(newPerPage: number) => {
+              setPage(1);
+              setPerPage(newPerPage);
+            }}
+            id={'top'}
+            isCompact={true}
+          />
         </ToolbarItem>
       </ToolbarContent>
 
@@ -555,7 +547,18 @@ const AccessRequestsTable: React.FC<AccessRequestsTableProps> = ({
     <React.Fragment>
       {toolbar}
       {table}
-      <AccessRequestsPagination id="bottom" />
+      <AccessRequestsPaginationView
+        itemCount={numRows}
+        perPage={perPage}
+        page={page}
+        onSetPage={setPage}
+        onPerPageSelect={(newPerPage: number) => {
+          setPage(1);
+          setPerPage(newPerPage);
+        }}
+        id={'bottom'}
+        isCompact={false}
+      />
       {modals}
     </React.Fragment>
   );

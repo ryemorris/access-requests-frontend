@@ -1,5 +1,5 @@
 import React from 'react';
-import { MUARole } from './useMUATableData';
+import { MUARole } from './useMUATableRolesData';
 
 interface UseMUATableExpansionProps {
   rows: MUARole[];

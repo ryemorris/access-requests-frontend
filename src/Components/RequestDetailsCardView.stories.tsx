@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { RequestDetailsCardView } from './AccessRequestDetailsPage';
+
+import { RequestDetailsCardView } from './RequestDetailsCardView';
 
 const meta: Meta<typeof RequestDetailsCardView> = {
   component: RequestDetailsCardView,
