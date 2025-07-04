@@ -1,38 +1,41 @@
 import React from 'react';
 import {
+  Button,
   EmptyState,
-  EmptyStateIcon,
   EmptyStateBody,
-  EmptyStateHeader,
   EmptyStateFooter,
 } from '@patternfly/react-core';
-import { Tbody, Tr, Td } from '@patternfly/react-table';
+import { Tbody, Td, Tr } from '@patternfly/react-table';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 
 interface MUANoResultsProps {
   columns: Array<any>; // Table column configuration
-  clearFiltersButton: React.ReactElement;
+  onClearFilters: () => void;
 }
 
 const MUANoResults: React.FC<MUANoResultsProps> = ({
   columns,
-  clearFiltersButton,
+  onClearFilters,
 }) => {
   return (
     <Tbody>
       <Tr>
         <Td colSpan={columns.length}>
-          <EmptyState variant="sm">
-            <EmptyStateHeader
-              titleText="No matching requests found"
-              icon={<EmptyStateIcon icon={SearchIcon} />}
-              headingLevel="h2"
-            />
+          <EmptyState
+            headingLevel="h2"
+            icon={SearchIcon}
+            titleText="No matching requests found"
+            variant="sm"
+          >
             <EmptyStateBody>
               No results match the filter criteria. Remove all filters or clear
               all filters to show results.
             </EmptyStateBody>
-            <EmptyStateFooter>{clearFiltersButton}</EmptyStateFooter>
+            <EmptyStateFooter>
+              <Button variant="link" onClick={onClearFilters}>
+                Clear filters
+              </Button>
+            </EmptyStateFooter>
           </EmptyState>
         </Td>
       </Tr>

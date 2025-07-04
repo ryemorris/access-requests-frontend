@@ -1,6 +1,6 @@
 import React from 'react';
 import HelpIcon from '@patternfly/react-icons/dist/esm/icons/help-icon';
-import { Popover } from '@patternfly/react-core';
+import { Button, Popover } from '@patternfly/react-core';
 
 interface InputHelpPopoverProps {
   headerContent?: React.ReactElement;
@@ -14,15 +14,15 @@ const InputHelpPopover: React.FC<InputHelpPopoverProps> = ({
   field = 'input',
 }) => (
   <Popover headerContent={headerContent} bodyContent={bodyContent}>
-    <button
-      type="button"
+    <Button
+      variant={'plain'}
       aria-label={`More info for ${field}`}
       onClick={(e) => e.preventDefault()}
       aria-describedby="form-name"
-      className="pf-v5-c-form__group-label-help"
+      className="pf-v6-c-form__group-label-help"
     >
       <HelpIcon />
-    </button>
+    </Button>
   </Popover>
 );
 
