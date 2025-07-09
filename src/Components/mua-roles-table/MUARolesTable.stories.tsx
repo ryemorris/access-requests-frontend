@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { MUARolesTableView, MUARole } from './MUARolesTable';
+import { MUARole, MUARolesTableView } from './MUARolesTable';
 
 const meta: Meta<typeof MUARolesTableView> = {
   component: MUARolesTableView,
@@ -142,8 +142,6 @@ const baseProps = {
   pagedRows: mockRoles.slice(0, 5),
   perPage: 5,
   page: 1,
-  anySelected: false,
-  isChecked: false,
   error: null,
   hasFilters: false,
   nameFilter: '',
@@ -151,21 +149,13 @@ const baseProps = {
   activeSortIndex: 0,
   activeSortDirection: 'asc' as const,
   selectedRoles: [],
-  onExpand: (role: MUARole) => console.log('Expand role:', role.display_name),
   isRoleExpanded: (role: MUARole) => role.isExpanded || false,
-  onSort: (event: React.MouseEvent, index: number, direction: 'asc' | 'desc') =>
-    console.log('Sort:', index, direction),
-  onSetPage: (event: any, page: number) => console.log('Set page:', page),
-  onPerPageSelect: (event: any, perPage: number) =>
-    console.log('Per page:', perPage),
   setNameFilter: (filter: string) => console.log('Name filter:', filter),
   setAppSelections: (() => {}) as React.Dispatch<
     React.SetStateAction<string[]>
   >,
   setSelectedRoles: (roles: string[]) => console.log('Selected roles:', roles),
   clearFilters: () => console.log('Clear filters'),
-  onSelectAll: (event: any, isSelected: boolean) =>
-    console.log('Select all:', isSelected),
 };
 
 // Read-only Mode Stories
@@ -204,8 +194,6 @@ export const EditableMode: Story = {
     getIsRowSelected: (roleName: string) =>
       ['Administrator', 'Developer'].includes(roleName),
     selectedRoles: ['Administrator', 'Developer'],
-    anySelected: true,
-    isChecked: false,
   },
   parameters: {
     docs: {
@@ -228,8 +216,6 @@ export const AllSelected: Story = {
     ) => console.log('Row select:', rowIndex, isSelected),
     getIsRowSelected: () => true,
     selectedRoles: mockRoles.map((role) => role.display_name),
-    anySelected: true,
-    isChecked: true,
   },
   parameters: {
     docs: {

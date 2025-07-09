@@ -77,10 +77,6 @@ interface MUARolesTableViewProps {
   perPage: number;
   /** Current page number */
   page: number;
-  /** Whether any rows are selected */
-  anySelected: boolean;
-  /** Whether the "select all" checkbox should be checked */
-  isChecked: boolean;
   /** Error state message */
   error: string | null;
   /** Whether there are active filters */
@@ -132,10 +128,7 @@ interface MUARolesTableViewProps {
   /** Callback to clear all filters */
   clearFilters: () => void;
   /** Callback for select all functionality */
-  onSelectAll?: (
-    event: React.FormEvent<HTMLInputElement> | null,
-    isSelected: boolean
-  ) => void;
+  onSelectAll?: (isSelected: boolean) => void;
 }
 
 /**
@@ -150,8 +143,6 @@ export function MUARolesTableView({
   filteredRows,
   perPage,
   page,
-  anySelected,
-  isChecked,
   error,
   hasFilters,
   nameFilter,
@@ -174,13 +165,6 @@ export function MUARolesTableView({
   const columns = ['Role name', 'Role description', 'Permissions'];
   const expandedColumns = ['Application', 'Resource type', 'Operation'];
 
-  // Clear filters button
-  const clearFiltersButton = (
-    <Button variant="link" onClick={clearFilters}>
-      Clear filters
-    </Button>
-  );
-
   // Pagination component
   const AccessRequestsPagination: React.FC<{ id: string }> = ({ id }) => (
     <Pagination
@@ -200,15 +184,20 @@ export function MUARolesTableView({
     <RoleToolbar
       selectedRoles={selectedRoles}
       setSelectedRoles={setSelectedRoles}
-      isChecked={isChecked}
+      isPageSelected={rows.every((item) =>
+        selectedRoles.includes(item.display_name)
+      )}
+      isPagePartiallySelected={
+        rows.some((item) => selectedRoles.includes(item.display_name)) &&
+        !rows.every((item) => selectedRoles.includes(item.display_name))
+      }
       appSelections={appSelections}
       setAppSelections={setAppSelections}
       columns={columns}
       rows={rows}
       filteredRows={filteredRows}
       pagedRows={pagedRows}
-      anySelected={anySelected}
-      clearFiltersButton={clearFiltersButton}
+      onClearFilters={clearFilters}
       perPage={perPage}
       nameFilter={nameFilter}
       setNameFilter={setNameFilter}
@@ -319,9 +308,9 @@ export function MUARolesTableView({
               />
             )}
             <Td dataLabel={columns[0]}>{row.display_name}</Td>
-            <Td dataLabel={columns[1]} className="pf-v5-m-truncate">
+            <Td dataLabel={columns[1]} className="pf-v6-m-truncate">
               <Tooltip entryDelay={1000} content={row.description}>
-                <span className="pf-v5-m-truncate pf-v5-c-table__text">
+                <span className="pf-v6-m-truncate pf-v6-c-table__text">
                   {row.description}
                 </span>
               </Tooltip>
@@ -330,12 +319,12 @@ export function MUARolesTableView({
               dataLabel={columns[2]}
               className={css(
                 'pf-c-table__compound-expansion-toggle',
-                isRoleExpanded(row) && 'pf-v5-m-expanded'
+                isRoleExpanded(row) && 'pf-v6-m-expanded'
               )}
             >
               <button
                 type="button"
-                className="pf-v5-c-table__button"
+                className="pf-v6-c-table__button"
                 onClick={() => onExpand(row)}
               >
                 {row.permissions}
@@ -346,8 +335,8 @@ export function MUARolesTableView({
           {/* Expanded row for permissions */}
           <Tr isExpanded={isRoleExpanded(row)}>
             {!isReadOnly && <Td />}
-            <Td className="pf-v5-u-p-0" colSpan={3}>
-              <Table className="pf-v5-m-no-border-rows">
+            <Td className="pf-v6-u-p-0" colSpan={3}>
+              <Table className="pf-v6-m-no-border-rows">
                 <Thead>
                   <Tr>
                     {expandedColumns.map((col) => (
@@ -382,10 +371,7 @@ export function MUARolesTableView({
 
       {/* No results */}
       {pagedRows.length === 0 && hasFilters && (
-        <MUANoResults
-          columns={columns}
-          clearFiltersButton={clearFiltersButton}
-        />
+        <MUANoResults columns={columns} onClearFilters={clearFilters} />
       )}
     </Table>
   );
@@ -493,8 +479,6 @@ const MUARolesTable: React.FC<MUARolesTableProps> = ({
       filteredRows={filteredRows}
       perPage={perPage}
       page={page}
-      anySelected={selectionProps.anySelected}
-      isChecked={selectionProps.isChecked || false}
       error={error}
       hasFilters={hasFilters}
       nameFilter={nameFilter}

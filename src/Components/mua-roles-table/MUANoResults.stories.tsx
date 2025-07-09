@@ -1,7 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from '@patternfly/react-core';
-import { Table, Thead, Th, Tr } from '@patternfly/react-table';
+import { Table, Th, Thead, Tr } from '@patternfly/react-table';
 import MUANoResults from './MUANoResults';
 
 const meta: Meta<typeof MUANoResults> = {
@@ -47,15 +46,8 @@ This component is typically rendered within a table body when filtering yields n
 export default meta;
 type Story = StoryObj<typeof MUANoResults>;
 
-const mockClearButton = (
-  <Button variant="link" onClick={() => console.log('Clear filters clicked')}>
-    Clear filters
-  </Button>
-);
-
 export const Default: Story = {
   args: {
     columns: ['Role name', 'Role description', 'Permissions'],
-    clearFiltersButton: mockClearButton,
   },
 };
